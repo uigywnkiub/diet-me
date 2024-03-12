@@ -54,10 +54,10 @@ const UploadForm = () => {
       setFileUrl(URL.createObjectURL(targetFile));
 
       new Compressor(targetFile, {
-        quality: 0.6,
-        convertSize: 4194303 / 10,
-        maxWidth: 200,
-        maxHeight: 200,
+        quality: 0.7,
+        convertSize: 4194304 / 10,
+        maxWidth: 150,
+        maxHeight: 150,
         success: (compressedFile: File) => {
           handleSubmit(compressedFile);
         },
@@ -81,7 +81,7 @@ const UploadForm = () => {
         Snap a picture of your food, instantly get calorie info. No counting, no
         stress.
       </p>
-      <div className="flex items-center m-auto justify-center w-full drop-shadow-md 2xl:w-2/3">
+      <div className="flex items-center m-auto justify-center w-full drop-shadow-md lg:w-2/3 2xl:w-1/2">
         <label
           htmlFor="dropzone-file"
           className={`flex flex-col items-center justify-center w-full h-fit px-14 ${
@@ -137,14 +137,20 @@ const UploadForm = () => {
           </div>
           {data.text && (
             <div className="overflow-auto">
-              <h1 className="text-center text-black dark:text-white font-medium text-md">
-                {data.text}
-              </h1>
+              {data.status === "error" ? (
+                <h1 className="text-center ping text-red-400 font-medium text-md">
+                  {data.text}
+                </h1>
+              ) : (
+                <h1 className="text-center text-black dark:text-white font-medium text-md">
+                  {data.text}
+                </h1>
+              )}
             </div>
           )}
           {!data.text && data.status === "loading" && (
-            <h1 className="text-center text-black animate-bounce dark:text-white font-medium text-md">
-              <span className="text-4xl">🍴</span>
+            <h1 className="text-center animate-pulse text-black dark:text-white font-medium text-md">
+              Processing...
             </h1>
           )}
           <input
