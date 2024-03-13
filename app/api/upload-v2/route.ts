@@ -1,3 +1,4 @@
+process.env.NODE_NO_WARNINGS = "stream/web";
 import { NextResponse, NextRequest } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { MimeType } from "@/types/api/upload";

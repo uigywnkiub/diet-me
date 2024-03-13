@@ -20,7 +20,9 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Diet Made Easy",
-    startupImage: "/icons/apple-touch-icon.png",
+    startupImage: {
+      url: "/icons/apple-touch-icon.png",
+    },
   },
 };
 
@@ -35,6 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       <body className={inter.className}>
         {children}
         <Analytics />
