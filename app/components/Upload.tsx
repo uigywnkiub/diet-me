@@ -10,7 +10,7 @@ const UploadForm = () => {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const constraintsRef = useRef(null);
 
-  const handleSubmit = useCallback(
+  const onSubmit = useCallback(
     async (file: File) => {
       const formData = new FormData();
       formData.append("file", file);
@@ -41,10 +41,10 @@ const UploadForm = () => {
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
       if (file) {
-        handleSubmit(file);
+        onSubmit(file);
       }
     },
-    [file, handleSubmit]
+    [file, onSubmit]
   );
 
   const onReset = useCallback(
@@ -57,7 +57,7 @@ const UploadForm = () => {
     []
   );
 
-  const handleChange = useCallback(
+  const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const targetFile = e.target.files?.[0];
       if (!targetFile || !(targetFile instanceof File)) return;
@@ -71,12 +71,12 @@ const UploadForm = () => {
         maxWidth: 150,
         maxHeight: 150,
         success: (compressedFile: File) => {
-          handleSubmit(compressedFile);
+          onSubmit(compressedFile);
         },
         error: (e) => console.error(e),
       });
     },
-    [handleSubmit]
+    [onSubmit]
   );
 
   return (
@@ -207,7 +207,7 @@ const UploadForm = () => {
             type="file"
             className="hidden"
             accept="image/*, .heic"
-            onChange={handleChange}
+            onChange={onChange}
           />
         </label>
       </motion.div>
