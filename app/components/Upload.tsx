@@ -1,12 +1,14 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Compressor from "compressorjs";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 
 const UploadForm = () => {
   const [data, setData] = useState({ status: "idle", text: "" });
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const constraintsRef = useRef(null);
 
   const handleSubmit = useCallback(
     async (file: File) => {
@@ -45,6 +47,16 @@ const UploadForm = () => {
     [file, handleSubmit]
   );
 
+  const onReset = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+      setData({ status: "idle", text: "" });
+      setFile(null);
+      setFileUrl(null);
+    },
+    []
+  );
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const targetFile = e.target.files?.[0];
@@ -81,15 +93,18 @@ const UploadForm = () => {
         Snap a picture of your food, instantly get calorie info. No counting, no
         stress.
       </p>
-      <div className="flex items-center m-auto justify-center w-full drop-shadow-md lg:w-2/3 2xl:w-1/2">
+      <motion.div className="flex items-center m-auto justify-center w-full drop-shadow-md lg:w-2/3 2xl:w-1/2">
         <label
           htmlFor="dropzone-file"
           className={`flex flex-col items-center justify-center w-full h-fit px-14 ${
-            !data.text && data.status === "idle" ? "" : "pb-8"
+            (data.text && data.status === "idle") || data.status === "error"
+              ? "pb-8"
+              : ""
           } border-2 outline outline-2 outline-offset-4 outline-gray-300 border-gray-300 border-dashed rounded-full cursor-pointer bg-gray-50
           } dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-400 dark:hover:border-gray-200 dark:hover:bg-gray-600`}
+          ref={constraintsRef}
         >
-          <div className="flex flex-col items-center justify-center py-5">
+          <motion.div className="flex flex-col items-center justify-center py-5">
             {!data.text && data.status === "idle" && (
               <>
                 <svg
@@ -107,12 +122,25 @@ const UploadForm = () => {
                     d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                   />
                 </svg>
-                <p className="mb-2 text-md text-gray-500 dark:text-gray-400">
+                <p className="mb-4 text-md select-none text-gray-500 dark:text-gray-400">
                   <span className="font-semibold">Upload Your Meal</span>
                 </p>
               </>
             )}
-            <div className="relative overflow-hidden w-20 h-20 bg-white rounded-full border-4 border-gray-300 shadow-lg dark:bg-gray-800 dark:border-gray-300 dark:text-gray-300">
+            <motion.div
+              className="relative select-none overflow-hidden w-20 h-20 bg-white rounded-full border-4 border-gray-300 shadow-lg dark:bg-gray-800 dark:border-gray-300 dark:text-gray-300"
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{
+                scale: 0.9,
+                rotate: -90,
+                type: "spring",
+                boxShadow: "0px 0px 15px rgba(0,0,0,0.2)",
+                cursor: "grabbing",
+              }}
+              drag
+              dragConstraints={constraintsRef}
+              dragTransition={{ bounceStiffness: 600, bounceDamping: 10 }}
+            >
               <div className="absolute inset-0 bg-gray-100 rounded-full"></div>
               <div className="absolute inset-2 bg-white rounded-full"></div>
               {!fileUrl && (
@@ -121,38 +149,59 @@ const UploadForm = () => {
                     data.status === "idle" ? "animate-wiggle" : ""
                   } inset-x-5 top-3 w-12 drop-shadow-md`}
                 >
-                  <span className="text-4xl">🥩</span>
+                  {/* <span className="text-4xl">🥩</span> */}
                 </h1>
               )}
               {fileUrl && (
                 <Image
                   width={56}
                   height={56}
-                  className="absolute rounded-full right-3 top-3 w-4/6 aspect-square"
+                  className={`absolute rounded-full right-3 top-3 w-4/6 aspect-square select-none ${
+                    !data.text && data.status === "loading"
+                      ? "animate-spin"
+                      : ""
+                  }`}
                   src={fileUrl}
                   alt="Food"
                 />
               )}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
           {data.text && (
-            <div className="overflow-auto">
-              {data.status === "error" ? (
-                <h1 className="text-center ping text-red-400 font-medium text-md">
-                  {data.text}
-                </h1>
-              ) : (
-                <h1 className="text-center text-black dark:text-white font-medium text-md">
-                  {data.text}
-                </h1>
-              )}
-            </div>
+            <AnimatePresence>
+              <motion.div className="overflow-auto">
+                {data.status === "error" ? (
+                  <motion.h1
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1, type: "spring" }}
+                    exit={{ y: 20, opacity: 0 }}
+                    className="text-center ping text-red-400 font-medium text-md"
+                  >
+                    {data.text}
+                  </motion.h1>
+                ) : (
+                  <motion.h1
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1, type: "spring" }}
+                    exit={{ y: 20, opacity: 0 }}
+                    className="text-center text-black dark:text-white font-medium text-md"
+                  >
+                    {data.text}
+                  </motion.h1>
+                )}
+              </motion.div>
+            </AnimatePresence>
           )}
-          {!data.text && data.status === "loading" && (
-            <h1 className="text-center animate-pulse text-black dark:text-white font-medium text-md">
+          {/* {!data.text && data.status === "loading" && (
+            <motion.h1
+              className="text-center animate-pulse text-black dark:text-white font-medium text-md"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1, type: "spring" }}
+              exit={{ y: 20, opacity: 0 }}
+            >
               Processing...
-            </h1>
-          )}
+            </motion.h1>
+          )} */}
           <input
             id="dropzone-file"
             type="file"
@@ -161,10 +210,10 @@ const UploadForm = () => {
             onChange={handleChange}
           />
         </label>
-      </div>
+      </motion.div>
       {(data.status === "loading" || data.status === "error" || data.text) && (
         <div className="flex justify-center">
-          <button
+          <motion.button
             disabled={data.status === "loading"}
             type="button"
             className="py-2.5 mt-6 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -190,7 +239,18 @@ const UploadForm = () => {
               </svg>
             )}
             {data.status === "loading" ? "Analyzing" : "Reanalyze"}
-          </button>
+          </motion.button>
+        </div>
+      )}
+      {data.status === "error" && (
+        <div className="flex justify-center">
+          <motion.button
+            type="button"
+            className="py-2.5 mt-3 px-5 text-sm font-medium text-red-800 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-red-700 focus:z-10 dark:bg-gray-800 dark:text-red-400 dark:border-gray-600 dark:hover:text-red-400 dark:hover:bg-gray-700"
+            onClick={onReset}
+          >
+            Reset
+          </motion.button>
         </div>
       )}
     </div>
