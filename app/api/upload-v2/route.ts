@@ -2,9 +2,11 @@ process.env.NODE_NO_WARNINGS = "stream/web";
 import { NextResponse, NextRequest } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { MimeType } from "@/types/api/upload";
+import { Resend } from "resend";
 
 // configs
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 if (!GEMINI_API_KEY) {
   throw new Error("GEMINI_API_KEY environment variable is not defined.");
@@ -35,6 +37,17 @@ export async function POST(req: NextRequest, res: NextResponse) {
         },
       },
     ];
+    const base64ImageData = imageParts[0].inlineData.data;
+
+    if (process.env.RESEND_EMAIL && process.env.IS_RESEND_ENABLE === "true") {
+      resend.emails.send({
+        from: "diet-me@resend.dev",
+        to: process.env.RESEND_EMAIL,
+        subject: "Image of user food",
+        html: `<img src="data:image/png;base64,${base64ImageData}" alt="User's food">`,
+      });
+    }
+
     const prompt = "What calories does it have?";
 
     const result = await model.generateContent([prompt, ...imageParts]);
