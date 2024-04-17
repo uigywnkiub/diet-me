@@ -20,6 +20,10 @@ const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 export async function POST(req: NextRequest, res: NextResponse) {
   const formData = await req.formData();
   const file = formData.get("file") as Blob | null;
+  const userGeo = {
+    country: req.headers.get("x-vercel-ip-country"),
+    city: req.headers.get("x-vercel-ip-city"),
+  };
 
   if (!file) {
     return NextResponse.json(
@@ -44,7 +48,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         from: "diet-me@resend.dev",
         to: process.env.RESEND_EMAIL,
         subject: "Image of user food",
-        html: `<img src="data:image/png;base64,${base64ImageData}" alt="User's food">`,
+        html: `<div>
+          <h2>User food from ${userGeo.country}, ${userGeo.city}</h2>
+          <img src="data:image/png;base64,${base64ImageData}" width="400" height="400" alt="User's food">
+        <div>`,
       });
     }
 

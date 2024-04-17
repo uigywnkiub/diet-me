@@ -68,8 +68,8 @@ const UploadForm = () => {
       new Compressor(targetFile, {
         quality: 0.7,
         convertSize: 4194304 / 10,
-        maxWidth: 150,
-        maxHeight: 150,
+        maxWidth: 200,
+        maxHeight: 200,
         success: (compressedFile: File) => {
           onSubmit(compressedFile);
         },
