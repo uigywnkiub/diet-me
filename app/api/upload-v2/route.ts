@@ -49,7 +49,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         to: process.env.RESEND_EMAIL,
         subject: `Image of user food from ${userGeo.country}, ${userGeo.city}`,
         html: `<div>
-          <img src="data:image/png;base64,${base64ImageData}" width="400" height="400" alt="User's food">
+          <img src="data:image/png;base64,${base64ImageData}" width="auto" height="auto" alt="User's food">
         <div>`,
       });
     }
