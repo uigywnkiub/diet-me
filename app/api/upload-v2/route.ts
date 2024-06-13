@@ -14,7 +14,10 @@ if (!GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 // Note: gemini-pro is an alias for gemini-1.0-pro.
-const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+// Old approach
+// const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+// New approach
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // main
 export async function POST(req: NextRequest, res: NextResponse) {
