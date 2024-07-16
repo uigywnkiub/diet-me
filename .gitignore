@@ -27,7 +27,8 @@ yarn-error.log*
 
 # local env files
 .env*.local
-.env*
+.env
+# .env*
 
 # vercel
 .vercel
@@ -40,3 +41,4 @@ next-env.d.ts
 /public/workbox*
 /public/sw*
 /public/fallback-development*
+/public/fallback-*
