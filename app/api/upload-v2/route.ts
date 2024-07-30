@@ -16,10 +16,10 @@ if (!GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
 // Note: gemini-pro is an alias for gemini-1.0-pro.
-// Old approach
-const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' })
+// DEPRECATED on July 12 2024 but worked good. Old approach
+// const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' })
 // New approach (but more text-based model)
-// const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
 // main
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       })
     }
 
-    const prompt = 'What calories does it have?'
+    const prompt = 'What calories does it have? Try to count or assume and get a number value of calories.'
 
     const result = await model.generateContent([prompt, ...imageParts])
     const text = result.response.text().trim()

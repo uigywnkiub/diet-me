@@ -99,9 +99,9 @@ const UploadForm = () => {
       <motion.div className='m-auto flex w-full items-center justify-center lg:w-2/3 2xl:w-1/2'>
         <label
           htmlFor='dropzone-file'
-          className={`flex h-fit w-full flex-col items-center justify-center px-14 ${
+          className={`flex h-fit w-full overflow-clip flex-col items-center justify-center px-14 ${
             (data.text && data.status === 'idle') || data.status === 'error'
-              ? 'pb-8'
+              ? 'pb-12'
               : ''
           } } dark:hover:bg-bray-800 cursor-pointer rounded-full border-2 border-dashed border-gray-300 bg-gray-50 outline outline-2 outline-offset-4 outline-gray-300 hover:bg-gray-100 dark:border-gray-400 dark:bg-gray-700 dark:hover:border-gray-200 dark:hover:bg-gray-600`}
           ref={constraintsRef}
