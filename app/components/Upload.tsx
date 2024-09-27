@@ -1,17 +1,29 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/image'
 
 import Compressor from 'compressorjs'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useAnimation } from 'framer-motion'
+
+type TData = {
+  status: 'error' | 'idle' | 'loading'
+  text: string
+}
 
 const UploadForm = () => {
-  const [data, setData] = useState({ status: 'idle', text: '' })
+  const controls = useAnimation()
+  const [data, setData] = useState<TData>({ status: 'idle', text: '' })
   const [file, setFile] = useState<File | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
   const constraintsRef = useRef(null)
+
+  useEffect(() => {
+    if (data.status === 'loading') {
+      controls.start({ x: 0, y: 0 })
+    }
+  }, [data.status, controls])
 
   const onSubmit = useCallback(
     async (file: File) => {
@@ -82,28 +94,37 @@ const UploadForm = () => {
     [onSubmit],
   )
 
+  const modifiedTextOutput = (text: string) => {
+    // Replace **bold** with <b> tags
+    const boldedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+    // Replace newlines with <br /> to preserve line breaks
+    const formattedText = boldedText.replace(/\n/g, '<br />')
+    return { __html: formattedText } // Return safely formatted HTML
+  }
+
   return (
     <div>
-      <h1 className='mb-4 text-center text-4xl font-extrabold text-gray-900 md:text-5xl lg:text-6xl dark:text-white'>
+      <h1 className='mb-4 text-center text-3xl font-extrabold text-gray-900 md:text-4xl lg:text-5xl dark:text-white'>
         <span className='bg-gradient-to-r from-red-400 to-blue-600 bg-clip-text text-transparent'>
-          Diet Made Easy:{' '}
+          Diet Made Easy
+          <br />
         </span>
-        <span className='bg-gradient-to-r from-gray-500 to-gray-700 bg-clip-text text-transparent dark:from-emerald-100 dark:to-sky-100'>
+        <span className='bg-gradient-to-r from-gray-500 to-gray-700 bg-clip-text text-xl text-transparent md:text-2xl dark:from-emerald-100 dark:to-sky-100'>
           Track Calories with Just a Photo!
         </span>
       </h1>
-      <p className='mb-6 text-center text-lg font-normal text-gray-500 sm:px-16 lg:text-xl xl:px-48 dark:text-gray-400'>
+      {/* <p className='mb-6 text-center text-lg font-normal text-gray-500 sm:px-16 lg:text-xl xl:px-48 dark:text-gray-400'>
         Snap a picture of your food, instantly get calorie info. No counting, no
         stress.
-      </p>
+      </p> */}
       <motion.div className='m-auto flex w-full items-center justify-center lg:w-2/3 2xl:w-1/2'>
         <label
           htmlFor='dropzone-file'
-          className={`flex h-fit w-full overflow-clip flex-col items-center justify-center px-14 ${
+          className={`flex h-fit w-full flex-col items-center justify-center overflow-clip px-14 ${
             (data.text && data.status === 'idle') || data.status === 'error'
               ? 'pb-12'
               : ''
-          } } dark:hover:bg-bray-800 cursor-pointer rounded-full border-2 border-dashed border-gray-300 bg-gray-50 outline outline-2 outline-offset-4 outline-gray-300 hover:bg-gray-100 dark:border-gray-400 dark:bg-gray-700 dark:hover:border-gray-200 dark:hover:bg-gray-600`}
+          } ${data.status === 'loading' ? 'pointer-events-none select-none border-0 bg-transparent bg-none pb-0 outline-none outline-0' : ''} dark:hover:bg-bray-800 cursor-pointer rounded-full border-2 border-dashed border-gray-300 bg-gray-50 outline outline-2 outline-offset-4 outline-gray-300 md:hover:bg-gray-100 dark:border-gray-400 dark:bg-gray-700 dark:hover:border-gray-200 dark:hover:bg-gray-600`}
           ref={constraintsRef}
         >
           <motion.div className='flex flex-col items-center justify-center py-5'>
@@ -130,7 +151,7 @@ const UploadForm = () => {
               </>
             )}
             <motion.div
-              className='relative h-20 w-20 select-none overflow-hidden rounded-full border-4 border-gray-300 bg-white dark:border-gray-300 dark:bg-gray-800 dark:text-gray-300'
+              className='relative z-10 h-20 w-20 select-none overflow-hidden rounded-full border-4 border-gray-300 bg-white dark:border-gray-300 dark:bg-gray-800 dark:text-gray-300'
               whileHover={{ scale: 1.1, rotate: 45 }}
               whileTap={{
                 scale: 0.9,
@@ -138,7 +159,8 @@ const UploadForm = () => {
                 type: 'spring',
                 cursor: 'grabbing',
               }}
-              drag
+              animate={controls}
+              drag={data.status !== 'loading'}
               dragConstraints={constraintsRef}
               dragTransition={{ bounceStiffness: 600, bounceDamping: 10 }}
             >
@@ -150,7 +172,7 @@ const UploadForm = () => {
                     data.status === 'idle' ? 'animate-wiggle' : ''
                   } inset-x-5 top-3 w-12`}
                 >
-                  {/* <span className="text-4xl">🥩</span> */}
+                  <span className='text-4xl'>🥩</span>
                 </h1>
               )}
               {fileUrl && (
@@ -177,18 +199,16 @@ const UploadForm = () => {
                     animate={{ y: 0, opacity: 1, type: 'spring' }}
                     exit={{ y: 20, opacity: 0 }}
                     className='ping text-md text-center font-medium text-red-400'
-                  >
-                    {data.text}
-                  </motion.h1>
+                    dangerouslySetInnerHTML={modifiedTextOutput(data.text)}
+                  ></motion.h1>
                 ) : (
                   <motion.h1
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1, type: 'spring' }}
                     exit={{ y: 20, opacity: 0 }}
                     className='text-md text-center font-medium text-black dark:text-white'
-                  >
-                    {data.text}
-                  </motion.h1>
+                    dangerouslySetInnerHTML={modifiedTextOutput(data.text)}
+                  ></motion.h1>
                 )}
               </motion.div>
             </AnimatePresence>
@@ -239,7 +259,7 @@ const UploadForm = () => {
                 />
               </svg>
             )}
-            {data.status === 'loading' ? 'Analyzing' : 'Reanalyze'}
+            {data.status === 'loading' ? 'Analyzing...' : 'Reanalyze'}
           </motion.button>
         </div>
       )}

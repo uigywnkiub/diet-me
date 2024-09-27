@@ -59,7 +59,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
       })
     }
 
-    const prompt = 'What calories does it have? Try to count or assume and get a number value of calories.'
+    const prompt =
+      'What calories does it have? Try to count or assume and get a number value of calories.'
 
     const result = await model.generateContent([prompt, ...imageParts])
     const text = result.response.text().trim()
