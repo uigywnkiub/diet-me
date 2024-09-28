@@ -29,6 +29,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
     country: req.headers.get('x-vercel-ip-country'),
     city: req.headers.get('x-vercel-ip-city'),
   }
+  // const languageHelper = req.headers.get('accept-language') || ''
+  // const preferredLanguage =
+  //   languageHelper.length > 0 ? languageHelper.split(',')[0] : 'en-US'
 
   if (!file) {
     return NextResponse.json(
@@ -60,7 +63,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
 
     const prompt =
-      'What calories does it have? Try to count or assume and get a number value of calories.'
+      'What calories does it have? Try to count or assume the approximate number value of calories. Get short info and wrap calorie number value into double asterisks.'
 
     const result = await model.generateContent([prompt, ...imageParts])
     const text = result.response.text().trim()

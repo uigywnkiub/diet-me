@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/image'
 
+import classNames from 'classnames'
 import Compressor from 'compressorjs'
 import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 
@@ -39,7 +40,7 @@ const UploadForm = () => {
         })
 
         if (!response.ok) {
-          throw new Error('Failed to upload file')
+          throw new Error('Failed to upload file.')
         }
 
         const { text } = await response.json()
@@ -104,7 +105,7 @@ const UploadForm = () => {
 
   return (
     <div>
-      <h1 className='mb-4 text-center text-3xl font-extrabold text-gray-900 md:text-4xl lg:text-5xl dark:text-white'>
+      <h1 className='mb-8 text-center text-3xl font-extrabold text-gray-900 md:text-4xl lg:text-5xl dark:text-white'>
         <span className='bg-gradient-to-r from-red-400 to-blue-600 bg-clip-text text-transparent'>
           Diet Made Easy
           <br />
@@ -120,11 +121,14 @@ const UploadForm = () => {
       <motion.div className='m-auto flex w-full items-center justify-center lg:w-2/3 2xl:w-1/2'>
         <label
           htmlFor='dropzone-file'
-          className={`flex h-fit w-full flex-col items-center justify-center overflow-clip px-14 ${
-            (data.text && data.status === 'idle') || data.status === 'error'
-              ? 'pb-12'
-              : ''
-          } ${data.status === 'loading' ? 'pointer-events-none select-none border-0 bg-transparent bg-none pb-0 outline-none outline-0' : ''} dark:hover:bg-bray-800 cursor-pointer rounded-full border-2 border-dashed border-gray-300 bg-gray-50 outline outline-2 outline-offset-4 outline-gray-300 md:hover:bg-gray-100 dark:border-gray-400 dark:bg-gray-700 dark:hover:border-gray-200 dark:hover:bg-gray-600`}
+          className={classNames(
+            'flex h-fit w-full cursor-pointer flex-col items-center justify-center overflow-clip px-14 pb-0',
+            data.status === 'idle' && 'pb-0',
+            data.status === 'error' && 'pb-4',
+            data.text && 'pb-8',
+            data.status !== 'loading' &&
+              'rounded-full border-2 border-dashed border-gray-300 dark:bg-gray-800 light:bg-gray-50 outline outline-2 outline-offset-4 outline-gray-300',
+          )}
           ref={constraintsRef}
         >
           <motion.div className='flex flex-col items-center justify-center py-5'>
