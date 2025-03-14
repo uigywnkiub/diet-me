@@ -1,65 +1,65 @@
-// THIS CODE WORKS ONLY LOCALLY AND ADDITIONALLY STORES USER IMAGES BUT DOES NOT WORK SERVERLESS FUNCTIONS LIKE VERCEL, OR AMAZON...
-// USER IMAGES STORES IN /public/uploads FOLDER ON EACH REQUEST TIME
-import { NextRequest, NextResponse } from 'next/server'
+// // THIS CODE WORKS ONLY LOCALLY AND ADDITIONALLY STORES USER IMAGES BUT DOES NOT WORK SERVERLESS FUNCTIONS LIKE VERCEL, OR AMAZON...
+// // USER IMAGES STORES IN /public/uploads FOLDER ON EACH REQUEST TIME
 
-import { MimeType, RequestContext } from '@/types/api/upload'
-import { GoogleGenerativeAI } from '@google/generative-ai'
-import * as dateFn from 'date-fns'
-import fs from 'fs'
-import mime from 'mime'
-import path from 'path'
+// import { NextRequest, NextResponse } from 'next/server'
 
-// configs
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+// import type { MimeType, RequestContext } from '@/types/api/upload'
+// import { GoogleGenerativeAI } from '@google/generative-ai'
+// import * as dateFn from 'date-fns'
+// import fs from 'fs'
+// import mime from 'mime'
+// import path from 'path'
 
-if (!GEMINI_API_KEY) {
-  throw new Error('GEMINI_API_KEY environment variable is not defined.')
-}
+// const { GEMINI_API_KEY, GEMINI_MODEL } = process.env
 
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-// Note: gemini-pro is an alias for gemini-1.0-pro.
-const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' })
+// if (!GEMINI_API_KEY) {
+//   throw new Error('GEMINI_API_KEY environment variable is not defined.')
+// }
+// if (!GEMINI_MODEL) {
+//   throw new Error('GEMINI_MODEL environment variable is not defined.')
+// }
 
-// helpers
-async function fileToGenerativePart(pathName: string, mimeType: MimeType) {
-  return {
-    inlineData: {
-      data: Buffer.from(fs.readFileSync(path.resolve(pathName))).toString(
-        'base64',
-      ),
-      mimeType,
-    },
-  }
-}
+// const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
+// const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
 
-function generateRandomFilename(file: Blob, uniqueSuffix: string) {
-  const extension = mime.getExtension(file.type)
-  const randomString = Math.random().toString(36).substring(2, 15)
+// async function fileToGenerativePart(pathName: string, mimeType: MimeType) {
+//   return {
+//     inlineData: {
+//       data: Buffer.from(fs.readFileSync(path.resolve(pathName))).toString(
+//         'base64',
+//       ),
+//       mimeType,
+//     },
+//   }
+// }
 
-  return `${randomString}-${uniqueSuffix}.${extension}`
-}
+// function generateRandomFilename(file: Blob, uniqueSuffix: string) {
+//   const extension = mime.getExtension(file.type)
+//   const randomString = Math.random().toString(36).substring(2, 15)
 
-function generateRandomUniqueSuffix(numberLimit: number = 1e4): string {
-  const timestamp = Date.now()
-  const randomNumber = Math.round(Math.random() * numberLimit)
+//   return `${randomString}-${uniqueSuffix}.${extension}`
+// }
 
-  return `${timestamp}-rand(${randomNumber})`
-}
+// function generateRandomUniqueSuffix(numberLimit: number = 1e4): string {
+//   const timestamp = Date.now()
+//   const randomNumber = Math.round(Math.random() * numberLimit)
 
-function generateFilename(file: Blob, uniqueSuffix: string): string {
-  const extension = mime.getExtension(file.type)
+//   return `${timestamp}-rand(${randomNumber})`
+// }
 
-  let filename: string
-  if (file instanceof File && file.name) {
-    filename = file.name.replace(/\.[^/.]+$/, '')
-  } else {
-    filename = generateRandomFilename(file, uniqueSuffix)
-  }
+// function generateFilename(file: Blob, uniqueSuffix: string): string {
+//   const extension = mime.getExtension(file.type)
 
-  return `${filename}-${uniqueSuffix}.${extension}`
-}
+//   let filename: string
+//   if (file instanceof File && file.name) {
+//     filename = file.name.replace(/\.[^/.]+$/, '')
+//   } else {
+//     filename = generateRandomFilename(file, uniqueSuffix)
+//   }
 
-// main
+//   return `${filename}-${uniqueSuffix}.${extension}`
+// }
+
 // export async function POST(req: NextRequest, ctx: RequestContext) {
 //   const formData = await req.formData()
 //   const file = formData.get('file') as Blob | null

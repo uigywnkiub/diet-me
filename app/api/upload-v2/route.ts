@@ -1,30 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { MimeType } from '@/types/api/upload'
+import { type MimeType } from '@/types/api/upload'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { Resend } from 'resend'
 
 process.env.NODE_NO_WARNINGS = 'stream/web'
 
-// configs
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY
-const resend = new Resend(process.env.RESEND_API_KEY)
+const {
+  GEMINI_API_KEY,
+  GEMINI_MODEL,
+  RESEND_API_KEY,
+  RESEND_EMAIL,
+  IS_RESEND_ENABLE,
+} = process.env
 
-if (!GEMINI_API_KEY) {
-  throw new Error('GEMINI_API_KEY environment variable is not defined.')
-}
+if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY not defined.')
+if (!GEMINI_MODEL) throw new Error('GEMINI_MODEL not defined.')
+if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY not defined.')
+if (!RESEND_EMAIL) throw new Error('RESEND_EMAIL not defined.')
+if (!IS_RESEND_ENABLE) throw new Error('IS_RESEND_ENABLE not defined.')
+
+const resend = new Resend(RESEND_API_KEY)
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-// Note: gemini-pro is an alias for gemini-1.0-pro.
-// DEPRECATED on July 12 2024 but worked good. Old approach
-// const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' })
-// New approach (but more text-based model)
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
 
-// main
 export async function POST(req: NextRequest, res: NextResponse) {
   const formData = await req.formData()
   const file = formData.get('file') as Blob | null
+  // Vercel geo docs: https://vercel.com/guides/geo-ip-headers-geolocation-vercel-functions
+  // userGeo works on vercel prod and city may be as null.
   const userGeo = {
     country: req.headers.get('x-vercel-ip-country'),
     city: req.headers.get('x-vercel-ip-city'),
@@ -45,16 +50,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
       {
         inlineData: {
           data: Buffer.from(await file.arrayBuffer()).toString('base64'),
-          mimeType: file?.type as MimeType,
+          mimeType: file.type as MimeType,
         },
       },
     ]
     const base64ImageData = imageParts[0].inlineData.data
 
-    if (process.env.RESEND_EMAIL && process.env.IS_RESEND_ENABLE === 'true') {
+    if (RESEND_EMAIL && IS_RESEND_ENABLE === 'true') {
       resend.emails.send({
         from: 'diet-me@resend.dev',
-        to: process.env.RESEND_EMAIL,
+        to: RESEND_EMAIL,
         subject: `Image of user food from ${userGeo.country}, ${userGeo.city}`,
         html: `<div>
           <img src="data:image/png;base64,${base64ImageData}" width="auto" height="auto" alt="User's food">
