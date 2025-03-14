@@ -1,6 +1,9 @@
 // // THIS CODE WORKS ONLY LOCALLY AND ADDITIONALLY STORES USER IMAGES BUT DOES NOT WORK SERVERLESS FUNCTIONS LIKE VERCEL, OR AMAZON...
 // // USER IMAGES STORES IN /public/uploads FOLDER ON EACH REQUEST TIME
 
+// Temp plug to keep the route to avoid build error.
+export async function POST() {}
+
 // import { NextRequest, NextResponse } from 'next/server'
 
 // import type { MimeType, RequestContext } from '@/types/api/upload'
