@@ -42,8 +42,8 @@ export default function RootLayout({
       <link rel='apple-touch-icon' href='/apple-touch-icon.png' />
       <body className={inter.className}>
         {children}
-        <Analytics />
-        <SpeedInsights />
+        <SpeedInsights debug={false} />
+        <Analytics debug={false} />
       </body>
     </html>
   )

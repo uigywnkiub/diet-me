@@ -6,7 +6,7 @@ export async function POST() {}
 
 // import { NextRequest, NextResponse } from 'next/server'
 
-// import type { MimeType, RequestContext } from '@/types/api/upload'
+// import type { TMimeType, TRequestContext } from '@/app/lib/upload'
 // import { GoogleGenerativeAI } from '@google/generative-ai'
 // import * as dateFn from 'date-fns'
 // import fs from 'fs'
@@ -25,13 +25,13 @@ export async function POST() {}
 // const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
 // const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
 
-// async function fileToGenerativePart(pathName: string, mimeType: MimeType) {
+// async function fileToGenerativePart(pathName: string, TMimeType: TMimeType) {
 //   return {
 //     inlineData: {
 //       data: Buffer.from(fs.readFileSync(path.resolve(pathName))).toString(
 //         'base64',
 //       ),
-//       mimeType,
+//       TMimeType,
 //     },
 //   }
 // }
@@ -63,7 +63,7 @@ export async function POST() {}
 //   return `${filename}-${uniqueSuffix}.${extension}`
 // }
 
-// export async function POST(req: NextRequest, ctx: RequestContext) {
+// export async function POST(req: NextRequest, ctx: TRequestContext) {
 //   const formData = await req.formData()
 //   const file = formData.get('file') as Blob | null
 
@@ -111,7 +111,7 @@ export async function POST() {}
 
 //     const prompt = 'What calories does it have?'
 //     const imageParts = [
-//       await fileToGenerativePart(filePath, file?.type as MimeType),
+//       await fileToGenerativePart(filePath, file?.type as TMimeType),
 //     ]
 
 //     const result = await model.generateContent([prompt, ...imageParts])

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { type MimeType } from '@/types/api/upload'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import type { TMimeType } from '@/app/lib/types'
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai'
 import { Resend } from 'resend'
 
 process.env.NODE_NO_WARNINGS = 'stream/web'
@@ -23,7 +23,28 @@ if (!IS_RESEND_ENABLE) throw new Error('IS_RESEND_ENABLE not defined.')
 const resend = new Resend(RESEND_API_KEY)
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
+// const model = genAI.getGenerativeModel({ model: GEMINI_MODEL })
+
+const CaloriesAIModel = genAI.getGenerativeModel({
+  model: GEMINI_MODEL,
+  generationConfig: {
+    // temperature: 2,
+    responseMimeType: 'application/json',
+    responseSchema: {
+      type: SchemaType.OBJECT,
+      properties: {
+        calories: {
+          type: SchemaType.NUMBER,
+        },
+        text: {
+          type: SchemaType.STRING,
+        },
+      },
+      required: ['calories', 'text'],
+    },
+  },
+  // safetySettings,
+})
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const formData = await req.formData()
@@ -46,11 +67,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
   }
 
   try {
+    // Image docs: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/image-understanding
     const imageParts = [
       {
         inlineData: {
           data: Buffer.from(await file.arrayBuffer()).toString('base64'),
-          mimeType: file.type as MimeType,
+          mimeType: file.type as TMimeType,
         },
       },
     ]
@@ -68,19 +90,18 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
 
     const prompt =
-      'What calories does it have? Try to count or assume the approximate number value of calories. Get short info and wrap calorie number value into double asterisks.'
+      'Estimate the calorie count in kilocalories (kcal) and provide a short description.'
 
-    const result = await model.generateContent([prompt, ...imageParts])
+    const result = await CaloriesAIModel.generateContent([
+      prompt,
+      ...imageParts,
+    ])
     const text = result.response.text().trim()
-
     return NextResponse.json({ text })
-  } catch (e: any) {
-    const errMsg = e.message?.split(':')?.[4]?.trim()
-    const errStatus = parseInt(errMsg.split(' ')?.[0]?.slice(1), 10)
-    console.error('Error while trying to upload a file\n', e)
+  } catch (e: unknown) {
     return NextResponse.json(
-      { error: errMsg || 'Something went wrong.' },
-      { status: errStatus || 500 },
+      { error: 'Something went wrong.' },
+      { status: 500 },
     )
   }
 }
