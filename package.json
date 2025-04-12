@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "author": "Volodymyr <vgerun97@gmail.com> (https://volodymyr-g.vercel.app)",
-  "description": "Snap a picture of your food, instantly get calorie info. No counting, no stress.",
+  "description": "Take a photo. Get calories, protein, fat, and carbs. Simple as that.",
   "scripts": {
     "dev": "next dev",
     "dev:tur": "next dev --turbo",
@@ -49,5 +49,22 @@
     "onlyBuiltDependencies": [
       "@vercel/speed-insights"
     ]
-  }
+  },
+  "keywords": [
+    "calorie tracker",
+    "macro tracker",
+    "nutrition",
+    "diet",
+    "food recognition",
+    "photo calorie counter",
+    "protein tracker",
+    "fat tracker",
+    "carb tracker",
+    "AI nutrition",
+    "health",
+    "fitness",
+    "meal tracking",
+    "photo to macros",
+    "nutrition app"
+  ]
 }

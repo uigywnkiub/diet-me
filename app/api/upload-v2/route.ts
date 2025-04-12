@@ -36,14 +36,25 @@ const CaloriesAIModel = genAI.getGenerativeModel({
         calories: {
           type: SchemaType.NUMBER,
         },
+        protein: {
+          type: SchemaType.NUMBER,
+          description: 'Protein in grams (g)',
+        },
+        fat: {
+          type: SchemaType.NUMBER,
+          description: 'Fat in grams (g)',
+        },
+        carbohydrates: {
+          type: SchemaType.NUMBER,
+          description: 'Carbohydrates in grams (g)',
+        },
         text: {
           type: SchemaType.STRING,
         },
       },
-      required: ['calories', 'text'],
+      required: ['calories', 'protein', 'fat', 'carbohydrates', 'text'],
     },
   },
-  // safetySettings,
 })
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -89,8 +100,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
       })
     }
 
-    const prompt =
-      'Estimate the calorie count in kilocalories (kcal) and provide a short description.'
+    const prompt = `Estimate the calorie count in kilocalories (kcal) and provide a short description.
+Also include approximate macronutrient values in grams: protein, fat, and carbohydrates.`
 
     const result = await CaloriesAIModel.generateContent([
       prompt,

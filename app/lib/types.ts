@@ -16,6 +16,9 @@ export type TUploadData = {
   status: 'idle' | 'loading' | 'success' | 'error'
   res: {
     calories: number
+    protein: number
+    fat: number
+    carbohydrates: number
     text: string
   }
 }

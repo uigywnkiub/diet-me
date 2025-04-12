@@ -16,11 +16,17 @@ type TProps = {
   mealEmoji: string
 }
 
-const UploadForm = ({ mealEmoji }: TProps) => {
+export default function UploadForm({ mealEmoji }: TProps) {
   const initData: TUploadData = useMemo(
     () => ({
       status: 'idle',
-      res: { calories: 0, text: '' },
+      res: {
+        calories: 0,
+        protein: 0,
+        fat: 0,
+        carbohydrates: 0,
+        text: '',
+      },
     }),
     [],
   )
@@ -159,164 +165,163 @@ const UploadForm = ({ mealEmoji }: TProps) => {
   }, [onPaste])
 
   return (
-    <div className='max-w-xl'>
-      <header>
-        <h1 className='mb-8 text-center text-3xl font-extrabold text-gray-900 md:text-4xl lg:text-5xl dark:text-white'>
-          <span className='bg-gradient-to-r from-red-400 to-blue-600 bg-clip-text text-transparent'>
-            Diet Made Easy
-            <br />
-          </span>
-          <span className='bg-gradient-to-r from-gray-500 to-gray-700 bg-clip-text text-xl text-transparent md:text-2xl dark:from-emerald-100 dark:to-sky-100'>
-            Track Calories with Just a Photo!
-          </span>
-        </h1>
-        {/* <p className='mb-6 text-center text-lg font-normal text-gray-500 sm:px-16 lg:text-xl xl:px-48 dark:text-gray-400'>
-        Snap a picture of your food, instantly get calorie info. No counting, no
-        stress.
-      </p> */}
-      </header>
-
-      <main>
-        <div
-          ref={tableRef}
-          onDragOver={onTableDragOver}
-          onDragLeave={onTableDragLeave}
-          onDrop={onTableDrop}
-          className='rounded-full border-0 border-double border-gray-300 bg-gray-50 p-10 shadow-lg outline outline-2 outline-offset-4 outline-gray-300 dark:bg-gray-800'
-        >
-          <div className='flex flex-col items-center justify-center'>
-            <label
-              htmlFor='dropzone-file'
-              className='cursor-pointer rounded-full'
-              ref={plateRef}
-              onDragOver={onPlateDragOver}
-              onDragLeave={onPlateDragLeave}
-              onDrop={onPlateDrop}
-            >
-              <AnimatePresence>
-                <motion.div
-                  className='relative z-10 h-20 w-20 select-none overflow-hidden rounded-full border-2 border-dashed border-gray-300'
-                  {...MOTION_EMOJI()}
-                  animate={{
-                    ...MOTION_EMOJI().animate,
-                    scale: isDragging ? 1.1 : 1,
-                  }}
-                  whileHover={{ ...MOTION_EMOJI().animate, scale: 1.1 }}
-                  drag={data.status !== 'loading'}
-                  dragConstraints={plateRef}
-                  dragTransition={{ bounceDamping: 14 }}
-                >
-                  <div
-                    className={cn(
-                      'absolute inset-0 rounded-full bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-200 dark:to-gray-300',
-                    )}
-                  ></div>
-                  <div
-                    className={cn(
-                      'absolute inset-2 rounded-full bg-gray-50 shadow-inner dark:bg-gray-100',
-                    )}
-                  ></div>
-                  {!fileUrl ? (
-                    <p className='pointer-events-nones absolute inset-x-[23px] top-5 w-12'>
-                      <AnimatePresence>
-                        <motion.span
-                          className={cn('block select-none text-3xl')}
-                          animate={{
-                            x: isDraggingOutside ? [0, -5, 5, -5, 5, 0] : 0,
-                          }}
-                          transition={{
-                            duration: 0.6,
-                            repeat: isDraggingOutside ? Infinity : undefined,
-                            repeatType: 'loop',
-                          }}
-                          exit={{
-                            x: 0,
-                          }}
-                        >
-                          {mealEmoji}
-                        </motion.span>
-                      </AnimatePresence>
-                    </p>
-                  ) : (
-                    <Image
-                      width={56}
-                      height={56}
-                      src={fileUrl}
-                      alt='Meal'
-                      className='absolute inset-0 h-full w-full select-none rounded-full object-cover object-center'
-                    />
-                  )}
-                </motion.div>
-              </AnimatePresence>
-              <input
-                id='dropzone-file'
-                type='file'
-                className='hidden'
-                accept='image/*, .heic'
-                onChange={onChange}
-              />
-            </label>
-
-            {data.status === 'idle' && (
-              <>
-                <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
-                <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
-                  <span className='block font-semibold'>
-                    {isDragging
-                      ? 'Release to Drop It'
-                      : 'Select, Drag & Drop, or Paste Meal'}
-                  </span>
-                  {/* <span className='block text-sm font-normal'>
-                    PNG, JPG, HEIC, GIF up to 10MB
-                  </span> */}
-                </p>
-              </>
-            )}
-
-            {data.status === 'loading' && (
-              <>
-                <BiSolidCctv className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
-                <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
-                  <span className='block font-semibold'>Processing...</span>
-                </p>
-              </>
-            )}
-
-            {data.status === 'error' && (
-              <>
-                <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
-                <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
-                  <span className='block font-semibold text-red-400'>
-                    Something went wrong on our end.
-                  </span>
-                </p>
-              </>
-            )}
-          </div>
-
-          {data.status === 'success' && (
+    <main>
+      <div
+        ref={tableRef}
+        onDragOver={onTableDragOver}
+        onDragLeave={onTableDragLeave}
+        onDrop={onTableDrop}
+        className='rounded-full border-0 border-double border-gray-300 bg-gray-50 p-10 text-sm shadow-lg outline outline-2 outline-offset-4 outline-gray-300 md:text-base dark:bg-gray-800'
+      >
+        <div className='flex flex-col items-center justify-center'>
+          <label
+            htmlFor='dropzone-file'
+            className='cursor-pointer rounded-full'
+            ref={plateRef}
+            onDragOver={onPlateDragOver}
+            onDragLeave={onPlateDragLeave}
+            onDrop={onPlateDrop}
+          >
             <AnimatePresence>
-              <motion.div className='mt-4 flex flex-col items-center justify-center gap-4 overflow-auto text-balance text-center'>
-                <div>
-                  <span className='text-gray-500 dark:text-gray-400'>
-                    Calories:{' '}
-                  </span>
-                  <span className='font-semibold'>{data.res.calories}</span>{' '}
-                  kcal
-                </div>
-                <div className='w-11/12'>
-                  <span className='text-gray-500 dark:text-gray-400'>
-                    Meal:{' '}
-                  </span>
-                  <span className='font-semibold'>{data.res.text}</span>
-                </div>
+              <motion.div
+                className='relative z-10 h-20 w-20 select-none overflow-hidden rounded-full border-2 border-dashed border-gray-300'
+                {...MOTION_EMOJI()}
+                animate={{
+                  ...MOTION_EMOJI().animate,
+                  scale: isDragging ? 1.1 : 1,
+                }}
+                whileHover={{ ...MOTION_EMOJI().animate, scale: 1.1 }}
+                drag={data.status !== 'loading'}
+                dragConstraints={plateRef}
+                dragTransition={{ bounceDamping: 14 }}
+              >
+                <div
+                  className={cn(
+                    'absolute inset-0 rounded-full bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-200 dark:to-gray-300',
+                  )}
+                ></div>
+                <div
+                  className={cn(
+                    'absolute inset-2 rounded-full bg-gray-50 shadow-inner dark:bg-gray-100',
+                  )}
+                ></div>
+                {!fileUrl ? (
+                  <p className='pointer-events-nones absolute inset-x-[23px] top-5 w-12'>
+                    <AnimatePresence>
+                      <motion.span
+                        className={cn('block select-none text-3xl')}
+                        animate={{
+                          x: isDraggingOutside ? [0, -5, 5, -5, 5, 0] : 0,
+                        }}
+                        transition={{
+                          duration: 0.6,
+                          repeat: isDraggingOutside ? Infinity : undefined,
+                          repeatType: 'loop',
+                        }}
+                        exit={{
+                          x: 0,
+                        }}
+                      >
+                        {mealEmoji}
+                      </motion.span>
+                    </AnimatePresence>
+                  </p>
+                ) : (
+                  <Image
+                    width={56}
+                    height={56}
+                    src={fileUrl}
+                    alt='Meal'
+                    className='absolute inset-0 h-full w-full select-none rounded-full object-cover object-center'
+                  />
+                )}
               </motion.div>
             </AnimatePresence>
+            <input
+              id='dropzone-file'
+              type='file'
+              className='hidden'
+              accept='image/*, .heic'
+              onChange={onChange}
+            />
+          </label>
+
+          {data.status === 'idle' && (
+            <>
+              <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
+                <span className='block font-semibold'>
+                  {isDragging
+                    ? 'Release to Drop It'
+                    : 'Select, Drag & Drop, or Paste Meal'}
+                </span>
+                {/* <span className='block text-sm font-normal'>
+                    PNG, JPG, HEIC, GIF up to 10MB
+                  </span> */}
+              </p>
+            </>
+          )}
+
+          {data.status === 'loading' && (
+            <>
+              <BiSolidCctv className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
+                <span className='block font-semibold'>Processing...</span>
+              </p>
+            </>
+          )}
+
+          {data.status === 'error' && (
+            <>
+              <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
+                <span className='block font-semibold text-red-400'>
+                  Something went wrong on our end.
+                </span>
+              </p>
+            </>
           )}
         </div>
-      </main>
-    </div>
+
+        {data.status === 'success' && (
+          <AnimatePresence>
+            <motion.div className='mt-4 flex flex-col items-center justify-center gap-4 overflow-auto text-balance text-center'>
+              <div>
+                <span className='text-gray-500 dark:text-gray-400'>
+                  Calories:{' '}
+                </span>
+                <span className='font-semibold'>{data.res.calories} kcal</span>
+              </div>
+              <div className='flex gap-4'>
+                <div>
+                  <span className='text-gray-500 dark:text-gray-400'>
+                    Protein:{' '}
+                  </span>
+                  <span className='font-semibold'>{data.res.protein} g</span>
+                </div>
+                <div>
+                  <span className='text-gray-500 dark:text-gray-400'>
+                    Fat:{' '}
+                  </span>
+                  <span className='font-semibold'>{data.res.fat} g</span>
+                </div>
+                <div>
+                  <span className='text-gray-500 dark:text-gray-400'>
+                    Carbs:{' '}
+                  </span>
+                  <span className='font-semibold'>
+                    {data.res.carbohydrates} g
+                  </span>
+                </div>
+              </div>
+              <div className='w-11/12'>
+                <span className='text-gray-500 dark:text-gray-400'>Meal: </span>
+                <span className='font-semibold'>{data.res.text}</span>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        )}
+      </div>
+    </main>
   )
 }
-
-export default UploadForm

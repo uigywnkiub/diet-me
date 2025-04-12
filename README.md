@@ -1,8 +1,8 @@
 # Diet Made Easy
 
-**Track Calories with Just a Photo!**
+**Photo → Calories + Macros. That Easy.**
 
-Snap a picture of your food, instantly get calorie info. No counting, no stress.
+Take a photo. Get calories, protein, fat, and carbs. Simple as that.
 
 ## Review
 
