@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export default function Home() {
   // Prefetch random emoji to use in client without rehydration issue.
+  // Also to make random works we need to define `force-dynamic`.
   const mealEmoji = getRandomValue(MEAL_EMOJI) || '🥩'
 
   return (
