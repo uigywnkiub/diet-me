@@ -10,14 +10,30 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   applicationName: 'Diet ME',
-  title: 'Diet Made Easy: Track Calories with Just a Photo!',
+  title: 'Diet Made Easy',
   description:
-    'Snap a picture of your food, instantly get calorie info. No counting, no stress.',
+    'Take a photo. Get calories, protein, fat, and carbs. Simple as that.',
   manifest: '/manifest.json',
   icons: {
     icon: '/icons/favicon.ico',
   },
-  keywords: 'diet, calorie, food, track, photo',
+  keywords: [
+    'calorie tracker',
+    'macro tracker',
+    'nutrition',
+    'diet',
+    'food recognition',
+    'photo calorie counter',
+    'protein tracker',
+    'fat tracker',
+    'carb tracker',
+    'AI nutrition',
+    'health',
+    'fitness',
+    'meal tracking',
+    'photo to macros',
+    'nutrition app',
+  ],
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
