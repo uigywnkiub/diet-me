@@ -5,6 +5,8 @@ import Header from './components/header'
 import UploadForm from './components/upload-form'
 import { getRandomValue } from './lib/helpers'
 
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   // Prefetch random emoji to use in client without rehydration issue.
   const mealEmoji = getRandomValue(MEAL_EMOJI) || '🥩'
