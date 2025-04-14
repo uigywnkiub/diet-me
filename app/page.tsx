@@ -13,12 +13,15 @@ export default function Home() {
   const mealEmoji = getRandomValue(MEAL_EMOJI) || '🥩'
 
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center p-6'>
-      <div className='max-w-xl'>
-        <Header />
-        <UploadForm mealEmoji={mealEmoji} />
+    <div className='flex min-h-screen flex-col px-6'>
+      <div className='flex flex-grow items-center justify-center'>
+        <div className='max-w-xl md:w-full'>
+          <Header />
+          <UploadForm mealEmoji={mealEmoji} />
+        </div>
       </div>
-      <div className='mt-6 md:mt-8'>
+
+      <div className='mb-4 mt-6 flex justify-center md:mt-8'>
         <Footer />
       </div>
     </div>

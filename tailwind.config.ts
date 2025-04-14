@@ -16,6 +16,14 @@ const config: Config = {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'spin-very-slow': 'spin 20s linear infinite',
+        'spin-ease': 'spin-ease 3s ease-in-out infinite',
+      },
+      keyframes: {
+        'spin-ease': {
+          '0%': { transform: 'rotate(0deg)', easing: 'ease-in' },
+          '50%': { transform: 'rotate(180deg)', easing: 'ease-out' },
+          '100%': { transform: 'rotate(360deg)', easing: 'ease-in' },
+        },
       },
     },
   },

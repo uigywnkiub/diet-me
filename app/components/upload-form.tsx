@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BiSolidCctv, BiSolidCloudUpload } from 'react-icons/bi'
+import { BiLoaderCircle, BiSolidCloudUpload } from 'react-icons/bi'
 
 import Image from 'next/image'
 
@@ -17,7 +17,7 @@ type TProps = {
 }
 
 export default function UploadForm({ mealEmoji }: TProps) {
-  const initData: TUploadData = useMemo(
+  const defaultData: TUploadData = useMemo(
     () => ({
       status: 'idle',
       res: {
@@ -30,34 +30,34 @@ export default function UploadForm({ mealEmoji }: TProps) {
     }),
     [],
   )
-  const [data, setData] = useState<TUploadData>(initData)
+  const [data, setData] = useState<TUploadData>(defaultData)
   const [file, setFile] = useState<File | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
 
-  const [isDragging, setIsDragging] = useState(false)
-  const [isDraggingOutside, setIsDraggingOutside] = useState(false)
+  const [isDraggingPlate, setIsDraggingPlate] = useState(false)
+  const [isDraggingTable, setIsDraggingTable] = useState(false)
 
   const plateRef = useRef<HTMLLabelElement | null>(null)
   const tableRef = useRef<HTMLDivElement | null>(null)
 
   const onTableDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-    setIsDraggingOutside(true)
+    setIsDraggingTable(true)
     if (plateRef.current && plateRef.current.contains(e.target as Node)) {
-      setIsDraggingOutside(false)
+      setIsDraggingTable(false)
     }
     return
   }
 
   const onTableDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-    setIsDraggingOutside(false)
+    setIsDraggingTable(false)
     return
   }
 
   const onTableDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-    setIsDraggingOutside(false)
+    setIsDraggingTable(false)
     return
   }
 
@@ -67,7 +67,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
       formData.append('file', file)
 
       try {
-        setData({ ...initData, status: 'loading' })
+        setData({ ...defaultData, status: 'loading' })
 
         const response = await fetch('/api/upload-v2', {
           method: 'POST',
@@ -77,13 +77,13 @@ export default function UploadForm({ mealEmoji }: TProps) {
         const { text } = await response.json()
         const parsedText: TUploadData['res'] = JSON.parse(text)
 
-        setData({ ...initData, status: 'success', res: parsedText })
+        setData({ ...defaultData, status: 'success', res: parsedText })
       } catch (err) {
-        setData({ ...initData, status: 'error' })
+        setData({ ...defaultData, status: 'error' })
         throw err
       }
     },
-    [initData],
+    [defaultData],
   )
 
   const onChange = useCallback(
@@ -111,22 +111,22 @@ export default function UploadForm({ mealEmoji }: TProps) {
 
   const onPlateDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault()
-    setIsDragging(true)
-    setIsDraggingOutside(false)
+    setIsDraggingPlate(true)
+    setIsDraggingTable(false)
   }
 
   const onPlateDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault()
     if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-      setIsDragging(false)
-      setIsDraggingOutside(true)
+      setIsDraggingPlate(false)
+      setIsDraggingTable(true)
     }
   }
 
   const onPlateDrop = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault()
-    setIsDragging(false)
-    setIsDraggingOutside(false)
+    setIsDraggingPlate(false)
+    setIsDraggingTable(false)
 
     const files = e.dataTransfer.files
     if (files.length) {
@@ -188,9 +188,9 @@ export default function UploadForm({ mealEmoji }: TProps) {
                 {...MOTION_EMOJI()}
                 animate={{
                   ...MOTION_EMOJI().animate,
-                  scale: isDragging ? 1.1 : 1,
+                  scale: isDraggingPlate ? 1.05 : 1,
                 }}
-                whileHover={{ ...MOTION_EMOJI().animate, scale: 1.1 }}
+                whileHover={{ ...MOTION_EMOJI().animate, scale: 1.05 }}
                 drag={data.status !== 'loading'}
                 dragConstraints={plateRef}
                 dragTransition={{ bounceDamping: 14 }}
@@ -211,11 +211,11 @@ export default function UploadForm({ mealEmoji }: TProps) {
                       <motion.span
                         className={cn('block select-none text-3xl')}
                         animate={{
-                          x: isDraggingOutside ? [0, -5, 5, -5, 5, 0] : 0,
+                          x: isDraggingTable ? [0, -5, 5, -5, 5, 0] : 0,
                         }}
                         transition={{
                           duration: 0.6,
-                          repeat: isDraggingOutside ? Infinity : undefined,
+                          repeat: isDraggingTable ? Infinity : undefined,
                           repeatType: 'loop',
                         }}
                         exit={{
@@ -248,25 +248,57 @@ export default function UploadForm({ mealEmoji }: TProps) {
 
           {data.status === 'idle' && (
             <>
-              <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+              >
+                <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              </motion.div>
+
               <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
-                <span className='block font-semibold'>
-                  {isDragging
-                    ? 'Release to Drop It'
-                    : 'Select, Drag & Drop, or Paste Meal'}
-                </span>
-                {/* <span className='block text-sm font-normal'>
+                <AnimatePresence mode='wait'>
+                  <motion.span
+                    key={isDraggingPlate ? 'dragging' : 'default'}
+                    className='block font-semibold'
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  >
+                    {isDraggingPlate
+                      ? 'Release to Drop It'
+                      : 'Select, Drag & Drop, or Paste Meal'}
+                  </motion.span>
+                  {/* <motion.span className='block text-sm font-normal'>
                     PNG, JPG, HEIC, GIF up to 10MB
-                  </span> */}
+                  </motion.span> */}
+                </AnimatePresence>
               </p>
             </>
           )}
 
           {data.status === 'loading' && (
             <>
-              <BiSolidCctv className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+              >
+                <BiLoaderCircle className='animate-spin-ease mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              </motion.div>
               <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
-                <span className='block font-semibold'>Processing...</span>
+                <motion.span
+                  className='block font-semibold'
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                >
+                  Processing
+                </motion.span>
               </p>
             </>
           )}
@@ -285,7 +317,13 @@ export default function UploadForm({ mealEmoji }: TProps) {
 
         {data.status === 'success' && (
           <AnimatePresence>
-            <motion.div className='mt-4 flex flex-col items-center justify-center gap-4 overflow-auto text-balance text-center'>
+            <motion.div
+              className='mt-4 flex flex-col items-center justify-center gap-4 overflow-auto text-balance text-center'
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+            >
               <div>
                 <span className='text-gray-500 dark:text-gray-400'>
                   Calories:{' '}
@@ -307,7 +345,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
                 </div>
                 <div>
                   <span className='text-gray-500 dark:text-gray-400'>
-                    Carbs:{' '}
+                    Carbohydrates:{' '}
                   </span>
                   <span className='font-semibold'>
                     {data.res.carbohydrates} g
