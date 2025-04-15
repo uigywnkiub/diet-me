@@ -39,7 +39,7 @@ export default function MacrosPopover() {
           <h3 className='text-balance text-center font-medium text-black dark:text-white'>
             Today&apos;s Macronutrient Summary
           </h3>
-          
+
           {existingData.calories > 0 && (
             <button onClick={onClearMacrosData}>
               <BiSolidTrashAlt className='fill-red-500 dark:fill-red-400' />
@@ -85,7 +85,7 @@ export default function MacrosPopover() {
                 </span>
               </div>
             </div>
-            <div className='text-xs text-gray-500 dark:text-gray-400'>
+            <div className='text-xs text-gray-500 md:text-sm dark:text-gray-400'>
               Every successful analysis updates the data
             </div>
           </motion.div>
