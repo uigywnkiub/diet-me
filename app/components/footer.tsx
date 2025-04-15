@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer>
       <div className='text-balance text-center text-xs font-medium text-gray-400 dark:text-gray-500'>
-        © {year} Diet ME — Simple Nutrition, Smart Living
+        © {year} Diet ME — Eat Smart. Live Well.
       </div>
     </footer>
   )

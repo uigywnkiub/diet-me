@@ -7,7 +7,7 @@ export default function Header() {
           <br />
         </span>
         <span className='bg-gradient-to-r from-gray-700 to-gray-600 bg-clip-text text-lg text-transparent md:text-xl dark:from-emerald-50 dark:to-sky-200'>
-          Photo → Calories + Macros. That Easy.
+          Photo → Calories + Macros.
         </span>
       </h1>
     </header>

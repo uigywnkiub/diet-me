@@ -22,3 +22,5 @@ export type TUploadData = {
     text: string
   }
 }
+
+export type TMacrosData = Omit<TUploadData['res'], 'text'>

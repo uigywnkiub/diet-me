@@ -5,6 +5,11 @@ export const cn = (...args: ClassValue[]) => {
   return twMerge(clsx(args))
 }
 
+export const numberFormat = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 1,
+  minimumFractionDigits: 0,
+})
+
 export const getRandomValue = <T>(
   input: T[] | Iterable<T> | string | number | boolean,
 ): T | null => {

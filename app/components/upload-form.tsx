@@ -4,27 +4,35 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BiLoaderCircle, BiSolidCloudUpload } from 'react-icons/bi'
 
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 import { MOTION_EMOJI } from '@/app/lib/motions'
+import { LOCAL_STORAGE_KEY } from '@/constants/local-storage'
 import Compressor from 'compressorjs'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { cn } from '../lib/helpers'
-import type { TUploadData } from '../lib/types'
+import { cn, numberFormat } from '../lib/helpers'
+import type { TMacrosData, TUploadData } from '../lib/types'
+
+export const defaultMacrosData = {
+  calories: 0,
+  protein: 0,
+  fat: 0,
+  carbohydrates: 0,
+} satisfies TMacrosData
 
 type TProps = {
   mealEmoji: string
 }
 
 export default function UploadForm({ mealEmoji }: TProps) {
+  const router = useRouter()
+
   const defaultData: TUploadData = useMemo(
     () => ({
       status: 'idle',
       res: {
-        calories: 0,
-        protein: 0,
-        fat: 0,
-        carbohydrates: 0,
+        ...defaultMacrosData,
         text: '',
       },
     }),
@@ -67,7 +75,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
       formData.append('file', file)
 
       try {
-        setData({ ...defaultData, status: 'loading' })
+        setData({ ...data, status: 'loading' })
 
         const response = await fetch('/api/upload-v2', {
           method: 'POST',
@@ -77,13 +85,13 @@ export default function UploadForm({ mealEmoji }: TProps) {
         const { text } = await response.json()
         const parsedText: TUploadData['res'] = JSON.parse(text)
 
-        setData({ ...defaultData, status: 'success', res: parsedText })
+        setData({ ...data, status: 'success', res: parsedText })
       } catch (err) {
-        setData({ ...defaultData, status: 'error' })
+        setData({ ...data, status: 'error' })
         throw err
       }
     },
-    [defaultData],
+    [data],
   )
 
   const onChange = useCallback(
@@ -159,10 +167,71 @@ export default function UploadForm({ mealEmoji }: TProps) {
     [onChange, file],
   )
 
+  const onResetDailyMacrosData = () => {
+    const today = new Date().toISOString().slice(0, 10)
+    const lastReset = localStorage.getItem(LOCAL_STORAGE_KEY.LAST_MACROS_RESET)
+    const existing = localStorage.getItem(LOCAL_STORAGE_KEY.MACROS_DATA)
+
+    if (!existing || existing === '{}' || existing === 'null') {
+      localStorage.removeItem(LOCAL_STORAGE_KEY.LAST_MACROS_RESET)
+    }
+
+    if (lastReset !== today) {
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY.MACROS_DATA,
+        JSON.stringify(defaultMacrosData),
+      )
+      localStorage.setItem(LOCAL_STORAGE_KEY.LAST_MACROS_RESET, today)
+    }
+  }
+
+  const onUpdateMacrosData = useCallback(() => {
+    const storedData = localStorage.getItem(LOCAL_STORAGE_KEY.MACROS_DATA)
+    const existingData: TMacrosData = storedData
+      ? JSON.parse(storedData)
+      : defaultMacrosData
+
+    const updatedData = Object.keys(defaultMacrosData).reduce(
+      (acc, key) => {
+        const storedValue = parseFloat(
+          String(existingData[key as keyof TMacrosData]),
+        )
+        const newValue = parseFloat(
+          String(data.res[key as keyof typeof data.res]),
+        )
+
+        const validStored = isNaN(storedValue) ? 0 : storedValue
+        const validNew = isNaN(newValue) ? 0 : newValue
+
+        acc[key as keyof TMacrosData] = validStored + validNew
+
+        return acc
+      },
+      {} as typeof defaultMacrosData,
+    )
+
+    localStorage.setItem(
+      LOCAL_STORAGE_KEY.MACROS_DATA,
+      JSON.stringify(updatedData),
+    )
+
+    router.refresh()
+  }, [data, router])
+
   useEffect(() => {
     document.addEventListener('paste', onPaste)
     return () => document.removeEventListener('paste', onPaste)
   }, [onPaste])
+
+  useEffect(() => {
+    onResetDailyMacrosData()
+  }, [])
+
+  useEffect(() => {
+    if (data.status === 'success') {
+      onUpdateMacrosData()
+    }
+  }, [data.status, onUpdateMacrosData])
 
   return (
     <main>
@@ -287,8 +356,9 @@ export default function UploadForm({ mealEmoji }: TProps) {
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
               >
-                <BiLoaderCircle className='animate-spin-ease mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+                <BiLoaderCircle className='mt-4 animate-spin-ease fill-gray-600 text-3xl dark:fill-gray-300' />
               </motion.div>
+
               <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
                 <motion.span
                   className='block font-semibold'
@@ -305,11 +375,25 @@ export default function UploadForm({ mealEmoji }: TProps) {
 
           {data.status === 'error' && (
             <>
-              <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+              >
+                <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
+              </motion.div>
+
               <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
-                <span className='block font-semibold text-red-400'>
-                  Something went wrong on our end.
-                </span>
+                <motion.span
+                  className='block font-semibold text-red-500 dark:text-red-400'
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                >
+                  Something went wrong on our end
+                </motion.span>
               </p>
             </>
           )}
@@ -326,34 +410,38 @@ export default function UploadForm({ mealEmoji }: TProps) {
             >
               <div>
                 <span className='text-gray-500 dark:text-gray-400'>
-                  Calories:{' '}
+                  Calories{' '}
                 </span>
-                <span className='font-semibold'>{data.res.calories} kcal</span>
+                <span className='font-semibold'>
+                  {numberFormat.format(data.res.calories)} kcal
+                </span>
               </div>
               <div className='flex gap-4'>
                 <div>
                   <span className='text-gray-500 dark:text-gray-400'>
-                    Protein:{' '}
-                  </span>
-                  <span className='font-semibold'>{data.res.protein} g</span>
-                </div>
-                <div>
-                  <span className='text-gray-500 dark:text-gray-400'>
-                    Fat:{' '}
-                  </span>
-                  <span className='font-semibold'>{data.res.fat} g</span>
-                </div>
-                <div>
-                  <span className='text-gray-500 dark:text-gray-400'>
-                    Carbohydrates:{' '}
+                    Protein{' '}
                   </span>
                   <span className='font-semibold'>
-                    {data.res.carbohydrates} g
+                    {numberFormat.format(data.res.protein)} g
+                  </span>
+                </div>
+                <div>
+                  <span className='text-gray-500 dark:text-gray-400'>Fat </span>
+                  <span className='font-semibold'>
+                    {numberFormat.format(data.res.fat)} g
+                  </span>
+                </div>
+                <div>
+                  <span className='text-gray-500 dark:text-gray-400'>
+                    Carbs{' '}
+                  </span>
+                  <span className='font-semibold'>
+                    {numberFormat.format(data.res.carbohydrates)} g
                   </span>
                 </div>
               </div>
               <div className='w-11/12'>
-                <span className='text-gray-500 dark:text-gray-400'>Meal: </span>
+                <span className='text-gray-500 dark:text-gray-400'>Meal </span>
                 <span className='font-semibold'>{data.res.text}</span>
               </div>
             </motion.div>

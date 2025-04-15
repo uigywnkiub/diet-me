@@ -2,6 +2,7 @@ import MEAL_EMOJI from '@/public/emoji/meal-emoji.json'
 
 import Footer from './components/footer'
 import Header from './components/header'
+import MacrosPopover from './components/macros-popover'
 import UploadForm from './components/upload-form'
 import { getRandomValue } from './lib/helpers'
 
@@ -24,6 +25,7 @@ export default function Home() {
       <div className='mb-4 mt-6 flex justify-center md:mt-8'>
         <Footer />
       </div>
+      <MacrosPopover />
     </div>
   )
 }
