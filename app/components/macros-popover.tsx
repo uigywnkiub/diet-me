@@ -35,7 +35,7 @@ export default function MacrosPopover() {
         popover='auto'
         className='w-80 rounded-xl bg-gray-50 p-6 text-sm text-gray-800 shadow-lg backdrop:bg-black/30 backdrop:backdrop-blur-sm md:w-1/3 md:text-base dark:bg-gray-800'
       >
-        <div className='mb-4 flex items-center justify-around'>
+        <div className='mb-4 flex items-center justify-center gap-2'>
           <h3 className='text-balance text-center font-medium text-black dark:text-white'>
             Today&apos;s Macronutrient Summary
           </h3>
@@ -92,13 +92,15 @@ export default function MacrosPopover() {
         </AnimatePresence>
       </div>
 
-      <button
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.05 }}
         // popoverTarget='popover'
         {...{ popovertarget: 'popover' }}
         className='fixed right-4 top-4 rounded-full bg-gray-50 p-2 shadow-lg dark:bg-gray-800'
       >
         <BiSolidBookBookmark className='fill-gray-600 text-lg dark:fill-gray-300' />
-      </button>
+      </motion.button>
     </>
   )
 }
