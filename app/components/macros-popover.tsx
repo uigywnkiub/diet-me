@@ -35,7 +35,7 @@ export default function MacrosPopover() {
         popover='auto'
         className='w-80 rounded-xl bg-gray-50 p-6 text-sm text-gray-800 shadow-lg backdrop:bg-black/30 backdrop:backdrop-blur-sm md:w-1/3 md:text-base dark:bg-gray-800'
       >
-        <div className='mb-4 flex items-center justify-center gap-2'>
+        <div className='mb-4 flex items-center justify-center gap-4'>
           <h3 className='text-balance text-center font-medium text-black dark:text-white'>
             Today&apos;s Macronutrient Summary
           </h3>
