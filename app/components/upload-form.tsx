@@ -167,7 +167,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
     [onChange, file],
   )
 
-  const onResetDailyMacrosData = () => {
+  const onResetDailyMacrosData = useCallback(() => {
     const today = new Date().toISOString().slice(0, 10)
     const lastReset = localStorage.getItem(LOCAL_STORAGE_KEY.LAST_MACROS_RESET)
     const existing = localStorage.getItem(LOCAL_STORAGE_KEY.MACROS_DATA)
@@ -182,8 +182,9 @@ export default function UploadForm({ mealEmoji }: TProps) {
         JSON.stringify(defaultMacrosData),
       )
       localStorage.setItem(LOCAL_STORAGE_KEY.LAST_MACROS_RESET, today)
+      router.refresh()
     }
-  }
+  }, [router])
 
   const onUpdateMacrosData = useCallback(() => {
     const storedData = localStorage.getItem(LOCAL_STORAGE_KEY.MACROS_DATA)
@@ -214,7 +215,6 @@ export default function UploadForm({ mealEmoji }: TProps) {
       LOCAL_STORAGE_KEY.MACROS_DATA,
       JSON.stringify(updatedData),
     )
-
     router.refresh()
   }, [data, router])
 
@@ -225,7 +225,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
 
   useEffect(() => {
     onResetDailyMacrosData()
-  }, [])
+  }, [onResetDailyMacrosData])
 
   useEffect(() => {
     if (data.status === 'success') {
@@ -260,6 +260,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
                   scale: isDraggingPlate ? 1.05 : 1,
                 }}
                 whileHover={{ ...MOTION_EMOJI().animate, scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 drag={data.status !== 'loading'}
                 dragConstraints={plateRef}
                 dragTransition={{ bounceDamping: 14 }}
