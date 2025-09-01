@@ -50,6 +50,11 @@
       "@vercel/speed-insights"
     ]
   },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  },
   "keywords": [
     "calorie tracker",
     "macro tracker",
