@@ -182,6 +182,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
         JSON.stringify(defaultMacrosData),
       )
       localStorage.setItem(LOCAL_STORAGE_KEY.LAST_MACROS_RESET, today)
+      localStorage.removeItem(LOCAL_STORAGE_KEY.MACROS_HISTORY)
       router.refresh()
     }
   }, [router])
@@ -191,6 +192,14 @@ export default function UploadForm({ mealEmoji }: TProps) {
     const existingData: TMacrosData = storedData
       ? JSON.parse(storedData)
       : defaultMacrosData
+
+    // Calculate the new food's macros
+    const newFoodMacros = {
+      calories: data.res.calories || 0,
+      protein: data.res.protein || 0,
+      fat: data.res.fat || 0,
+      carbohydrates: data.res.carbohydrates || 0,
+    }
 
     const updatedData = Object.keys(defaultMacrosData).reduce(
       (acc, key) => {
@@ -205,16 +214,26 @@ export default function UploadForm({ mealEmoji }: TProps) {
         const validNew = isNaN(newValue) ? 0 : newValue
 
         acc[key as keyof TMacrosData] = validStored + validNew
-
         return acc
       },
       {} as typeof defaultMacrosData,
+    )
+
+    // Add to history for undo functionality
+    const history = JSON.parse(
+      localStorage.getItem(LOCAL_STORAGE_KEY.MACROS_HISTORY) || '[]',
+    )
+    history.push(newFoodMacros)
+    localStorage.setItem(
+      LOCAL_STORAGE_KEY.MACROS_HISTORY,
+      JSON.stringify(history),
     )
 
     localStorage.setItem(
       LOCAL_STORAGE_KEY.MACROS_DATA,
       JSON.stringify(updatedData),
     )
+    window.dispatchEvent(new Event('macrosUpdated'))
     router.refresh()
   }, [data, router])
 

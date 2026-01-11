@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <div className='flex min-h-screen flex-col px-6'>
       <div className='flex flex-grow items-center justify-center'>
-        <div className='md:max-w-xl w-full'>
+        <div className='w-full md:max-w-xl'>
           <Header />
           <UploadForm mealEmoji={mealEmoji} />
         </div>

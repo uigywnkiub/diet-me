@@ -100,8 +100,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
       })
     }
 
-    const prompt = `Estimate the calorie count in kilocalories (kcal) and provide a short description.
-Also include approximate macronutrient values in grams: protein, fat, and carbohydrates.`
+    const prompt = `Analyze the ENTIRE food item visible in this image, not just a single slice or portion.
+
+Provide:
+- Total calories (kcal) for the complete food shown
+- Total macronutrients in grams: protein, fat, carbohydrates
+- Brief description
+
+Base calculations on the FULL amount of food visible in the image.`
 
     const result = await CaloriesAIModel.generateContent([
       prompt,
