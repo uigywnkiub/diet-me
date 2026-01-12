@@ -389,7 +389,8 @@ export default function MacrosPopover() {
                 </div>
 
                 <div className='relative'>
-                  <svg className='h-32 w-32 -rotate-90 transform md:h-40 md:w-40'>
+                  <svg className='h-32 w-32 -rotate-[225deg] transform md:h-40 md:w-40'>
+                    {/* Background arc - mobile */}
                     <circle
                       cx='64'
                       cy='64'
@@ -398,7 +399,10 @@ export default function MacrosPopover() {
                       strokeWidth='8'
                       fill='none'
                       className='text-gray-200 md:hidden dark:text-gray-600'
+                      strokeDasharray={`${2 * Math.PI * 56 * 0.75} ${2 * Math.PI * 56}`}
+                      strokeLinecap='round'
                     />
+                    {/* Background arc - desktop */}
                     <circle
                       cx='80'
                       cy='80'
@@ -407,7 +411,10 @@ export default function MacrosPopover() {
                       strokeWidth='10'
                       fill='none'
                       className='hidden text-gray-200 md:block dark:text-gray-600'
+                      strokeDasharray={`${2 * Math.PI * 70 * 0.75} ${2 * Math.PI * 70}`}
+                      strokeLinecap='round'
                     />
+                    {/* Progress arc - mobile */}
                     <circle
                       cx='64'
                       cy='64'
@@ -419,11 +426,12 @@ export default function MacrosPopover() {
                       }
                       strokeWidth='8'
                       fill='none'
-                      strokeDasharray={`${2 * Math.PI * 56}`}
-                      strokeDashoffset={`${2 * Math.PI * 56 * Math.max(0, 1 - macrosData.calories / macrosData.totalCalories)}`}
+                      strokeDasharray={`${2 * Math.PI * 56 * 0.75} ${2 * Math.PI * 56}`}
+                      strokeDashoffset={`${2 * Math.PI * 56 * 0.75 * (1 - Math.min(macrosData.calories / macrosData.totalCalories, 1))}`}
                       strokeLinecap='round'
                       className='transition-all duration-500 md:hidden'
                     />
+                    {/* Progress arc - desktop */}
                     <circle
                       cx='80'
                       cy='80'
@@ -435,8 +443,8 @@ export default function MacrosPopover() {
                       }
                       strokeWidth='10'
                       fill='none'
-                      strokeDasharray={`${2 * Math.PI * 70}`}
-                      strokeDashoffset={`${2 * Math.PI * 70 * Math.max(0, 1 - macrosData.calories / macrosData.totalCalories)}`}
+                      strokeDasharray={`${2 * Math.PI * 70 * 0.75} ${2 * Math.PI * 70}`}
+                      strokeDashoffset={`${2 * Math.PI * 70 * 0.75 * (1 - Math.min(macrosData.calories / macrosData.totalCalories, 1))}`}
                       strokeLinecap='round'
                       className='hidden transition-all duration-500 md:block'
                     />
