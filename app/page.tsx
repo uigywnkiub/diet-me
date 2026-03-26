@@ -21,10 +21,7 @@ export default function Home() {
           <UploadForm mealEmoji={mealEmoji} />
         </div>
       </div>
-
-      <div className='mb-4 mt-6 flex justify-center md:mt-8'>
-        <Footer />
-      </div>
+      <Footer />
       <MacrosPopover />
     </div>
   )

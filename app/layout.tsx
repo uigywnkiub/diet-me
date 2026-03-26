@@ -56,6 +56,8 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <link rel='apple-touch-icon' href='/apple-touch-icon.png' />
+      <meta name='apple-mobile-web-app-capable' content='yes' />
+      <meta name='mobile-web-app-capable' content='yes' />
       <body className={inter.className}>
         {children}
         <SpeedInsights debug={false} />

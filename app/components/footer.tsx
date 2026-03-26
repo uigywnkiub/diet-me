@@ -4,7 +4,7 @@ export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer>
+    <footer className='mb-4 mt-6 flex justify-center md:mt-8'>
       <div className='text-balance text-center text-xs font-medium text-gray-400 dark:text-gray-500'>
         © {year} Diet ME — Eat Smart. Live Well.
       </div>

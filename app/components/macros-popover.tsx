@@ -5,6 +5,8 @@ import {
   BiBookAlt,
   BiCheck,
   BiEditAlt,
+  BiMinus,
+  BiPlus,
   BiTrashAlt,
   BiUndo,
   BiX,
@@ -47,7 +49,7 @@ export default function MacrosPopover() {
         const parsed = JSON.parse(storedData)
         setMacrosData({
           calories: parsed.calories || 0,
-          burned: 0,
+          burned: parsed.burned || 0,
           protein: parsed.protein || 0,
           proteinGoal: parsed.proteinGoal || 142,
           fat: parsed.fat || 0,
@@ -94,6 +96,7 @@ export default function MacrosPopover() {
         setMacrosData((prev) => ({
           ...prev,
           calories: parsed.calories || 0,
+          burned: parsed.burned || 0,
           protein: parsed.protein || 0,
           fat: parsed.fat || 0,
           carbohydrates: parsed.carbohydrates || 0,
@@ -178,6 +181,7 @@ export default function MacrosPopover() {
       protein: 0,
       fat: 0,
       carbohydrates: 0,
+      burned: 0,
       proteinGoal: macrosData.proteinGoal,
       fatGoal: macrosData.fatGoal,
       carbsGoal: macrosData.carbsGoal,
@@ -258,6 +262,7 @@ export default function MacrosPopover() {
       fatGoal: macrosData.fatGoal,
       carbsGoal: macrosData.carbsGoal,
       totalCalories: macrosData.totalCalories,
+      burned: macrosData.burned,
     }
 
     // Remove last entry from history
@@ -283,6 +288,17 @@ export default function MacrosPopover() {
     window.dispatchEvent(new Event('macrosUpdated'))
   }
 
+  const onChangeBurned = (delta: number) => {
+    setMacrosData((prev) => {
+      const updated = { ...prev, burned: Math.max(0, prev.burned + delta) }
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY.MACROS_DATA,
+        JSON.stringify(updated),
+      )
+      return updated
+    })
+  }
+
   return (
     <>
       {/* Floating Button */}
@@ -290,9 +306,9 @@ export default function MacrosPopover() {
         whileTap={{ scale: 0.95 }}
         whileHover={{ scale: 1.05 }}
         onClick={() => setIsOpen(!isOpen)}
-        className='fixed right-4 top-4 z-50 rounded-full bg-white p-3 shadow-lg transition-shadow hover:shadow-xl md:right-10 md:top-10'
+        className='bg-app-gradient fixed right-4 top-4 z-50 rounded-full bg-gray-50 p-3 shadow-lg transition-shadow hover:shadow-xl md:right-10 md:top-10 dark:bg-gray-800'
       >
-        <BiBookAlt className='fill-gray-600 text-2xl' />
+        <BiBookAlt className='fill-gray-600 text-2xl dark:fill-gray-100' />
       </motion.button>
 
       {/* Backdrop */}
@@ -318,29 +334,31 @@ export default function MacrosPopover() {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className='fixed right-4 top-20 z-50 w-[91.5vw] max-w-2xl md:right-10 md:top-24 md:w-[60vw] lg:w-[30vw]'
           >
-            <div className='rounded-3xl bg-white p-4 shadow-2xl md:p-6 dark:bg-gray-800'>
+            <div className='bg-app-gradient rounded-3xl bg-white p-4 shadow-2xl md:p-6 dark:bg-gray-800'>
               {/* Header with Buttons */}
               <div className='mb-4 flex items-center justify-between md:mb-6'>
-                <h3 className='text-xl font-extrabold text-gray-900 md:text-2xl dark:text-white'>
+                <h3 className='text-xl font-extrabold text-gray-900 md:text-2xl dark:text-gray-100'>
                   Today&apos;s Summary
                 </h3>
-                {/* <h2 className='text-xl font-extrabold text-gray-900 dark:text-white md:text-2xl'>🔥1</h2> */}
+                {/* <h2 className='text-xl font-extrabold text-gray-900 md:text-2xl dark:text-gray-100'>
+                  🔥1
+                </h2> */}
                 <div className='flex items-center gap-2'>
                   {isEditingGoals ? (
                     <>
                       <button
                         onClick={onSaveGoals}
-                        className='rounded-full p-2 transition-colors hover:bg-green-50 dark:hover:bg-green-900/30'
+                        className='rounded-full p-2 transition-colors hover:bg-green-50/50 dark:hover:bg-green-900/30'
                         title='Save goals'
                       >
-                        <BiCheck className='fill-green-600 text-2xl' />
+                        <BiCheck className='fill-green-500 text-lg md:text-xl dark:fill-green-400' />
                       </button>
                       <button
                         onClick={onCancelEdit}
-                        className='rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-900/30'
+                        className='rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-900/30'
                         title='Cancel'
                       >
-                        <BiX className='fill-gray-600 text-2xl dark:fill-gray-400' />
+                        <BiX className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
                       </button>
                     </>
                   ) : (
@@ -348,7 +366,7 @@ export default function MacrosPopover() {
                       {hasHistory && (
                         <button
                           onClick={onRevertLast}
-                          className='rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-900/30'
+                          className='rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-900/30'
                           title='Revert last analyzed food'
                         >
                           <BiUndo className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
@@ -356,7 +374,7 @@ export default function MacrosPopover() {
                       )}
                       <button
                         onClick={() => setIsEditingGoals(true)}
-                        className='rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-900/30'
+                        className='rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-900/30'
                         title='Edit goals'
                       >
                         <BiEditAlt className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
@@ -364,7 +382,7 @@ export default function MacrosPopover() {
                       {macrosData.calories > 0 && (
                         <button
                           onClick={onClearData}
-                          className='rounded-full p-2 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30'
+                          className='rounded-full p-2 transition-colors hover:bg-red-50/50 dark:hover:bg-red-900/30'
                           title='Clear all data'
                         >
                           <BiTrashAlt className='fill-red-600 text-lg md:text-xl dark:fill-red-400' />
@@ -379,7 +397,7 @@ export default function MacrosPopover() {
               <div className='mb-6 flex items-center justify-around md:mb-8'>
                 <div className='text-center'>
                   <div
-                    className={`text-2xl font-bold md:text-3xl ${macrosData.calories > macrosData.totalCalories ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}
+                    className={`text-2xl font-bold md:text-3xl ${macrosData.calories > macrosData.totalCalories ? 'text-red-500' : 'text-gray-900 dark:text-gray-100'}`}
                   >
                     {Math.round(macrosData.calories)}
                   </div>
@@ -398,7 +416,7 @@ export default function MacrosPopover() {
                       stroke='currentColor'
                       strokeWidth='8'
                       fill='none'
-                      className='text-gray-200 md:hidden dark:text-gray-600'
+                      className='text-gray-300 md:hidden dark:text-gray-600'
                       strokeDasharray={`${2 * Math.PI * 56 * 0.75} ${2 * Math.PI * 56}`}
                       strokeLinecap='round'
                     />
@@ -410,7 +428,7 @@ export default function MacrosPopover() {
                       stroke='currentColor'
                       strokeWidth='10'
                       fill='none'
-                      className='hidden text-gray-200 md:block dark:text-gray-600'
+                      className='hidden text-gray-300 md:block dark:text-gray-600'
                       strokeDasharray={`${2 * Math.PI * 70 * 0.75} ${2 * Math.PI * 70}`}
                       strokeLinecap='round'
                     />
@@ -422,7 +440,7 @@ export default function MacrosPopover() {
                       stroke={
                         macrosData.calories > macrosData.totalCalories
                           ? '#ef4444'
-                          : '#10b981'
+                          : '#22C55F'
                       }
                       strokeWidth='8'
                       fill='none'
@@ -439,7 +457,7 @@ export default function MacrosPopover() {
                       stroke={
                         macrosData.calories > macrosData.totalCalories
                           ? '#ef4444'
-                          : '#10b981'
+                          : '#22C55F'
                       }
                       strokeWidth='10'
                       fill='none'
@@ -451,7 +469,7 @@ export default function MacrosPopover() {
                   </svg>
                   <div className='absolute inset-0 flex flex-col items-center justify-center'>
                     <div
-                      className={`text-3xl font-extrabold md:text-4xl ${remaining < 0 ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}
+                      className={`text-3xl font-extrabold md:text-4xl ${remaining < 0 ? 'text-red-500' : 'text-gray-900 dark:text-gray-100'}`}
                     >
                       {Math.abs(Math.round(remaining)).toLocaleString()}
                     </div>
@@ -477,12 +495,27 @@ export default function MacrosPopover() {
                 </div>
 
                 <div className='text-center'>
-                  <div className='text-2xl font-bold text-gray-900 md:text-3xl dark:text-white'>
-                    {macrosData.burned}
+                  <button
+                    onClick={() => onChangeBurned(50)}
+                    className='rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-900/30'
+                    title='Add 50 burned calories'
+                  >
+                    <BiPlus className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
+                  </button>
+                  <div className='text-2xl font-bold text-gray-900 md:text-3xl dark:text-gray-100'>
+                    {Math.abs(Math.round(macrosData.burned)).toLocaleString()}
                   </div>
                   <div className='mt-1 text-xs text-gray-500 md:text-sm dark:text-gray-400'>
                     Burned
                   </div>
+                  <button
+                    onClick={() => onChangeBurned(-50)}
+                    className='rounded-full p-2 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-gray-900/30'
+                    disabled={macrosData.burned === 0}
+                    title='Remove 50 burned calories'
+                  >
+                    <BiMinus className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
+                  </button>
                 </div>
               </div>
 
@@ -494,7 +527,7 @@ export default function MacrosPopover() {
                       Carbs
                     </span>
                   </div>
-                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600'>
+                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600'>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{
@@ -504,12 +537,14 @@ export default function MacrosPopover() {
                       className={`absolute h-full rounded-full ${
                         macrosData.carbohydrates > macrosData.carbsGoal
                           ? 'bg-red-500'
-                          : 'bg-[#10b981]'
+                          : 'bg-[#22C55F]'
                       }`}
                     />
                   </div>
+
+                  {/* Carbs */}
                   <div
-                    className={`font- mt-2 flex items-center gap-1 text-xs font-semibold text-gray-900 md:text-sm dark:text-white ${
+                    className={`mt-2 flex items-center gap-1 text-xs font-semibold text-gray-900 md:text-sm dark:text-gray-100 ${
                       macrosData.carbohydrates > macrosData.carbsGoal
                         ? 'text-red-500'
                         : 'text-gray-600 dark:text-gray-200'
@@ -542,7 +577,7 @@ export default function MacrosPopover() {
                       Protein
                     </span>
                   </div>
-                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600'>
+                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600'>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{
@@ -552,12 +587,12 @@ export default function MacrosPopover() {
                       className={`absolute h-full rounded-full ${
                         macrosData.protein > macrosData.proteinGoal
                           ? 'bg-red-500'
-                          : 'bg-[#10b981]'
+                          : 'bg-[#22C55F]'
                       }`}
                     />
                   </div>
                   <div
-                    className={`mt-2 flex items-center gap-1 text-xs font-semibold text-gray-900 md:text-sm dark:text-white ${
+                    className={`mt-2 flex items-center gap-1 text-xs font-semibold text-gray-900 md:text-sm dark:text-gray-100 ${
                       macrosData.protein > macrosData.proteinGoal
                         ? 'text-red-500'
                         : 'text-gray-600 dark:text-gray-200'
@@ -590,7 +625,7 @@ export default function MacrosPopover() {
                       Fat
                     </span>
                   </div>
-                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600'>
+                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600'>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{
@@ -600,12 +635,12 @@ export default function MacrosPopover() {
                       className={`absolute h-full rounded-full ${
                         macrosData.fat > macrosData.fatGoal
                           ? 'bg-red-500'
-                          : 'bg-[#10b981]'
+                          : 'bg-[#22C55F]'
                       }`}
                     />
                   </div>
                   <div
-                    className={`mt-2 flex items-center gap-1 text-xs font-semibold text-gray-900 md:text-sm dark:text-white ${
+                    className={`mt-2 flex items-center gap-1 text-xs font-semibold text-gray-900 md:text-sm dark:text-gray-100 ${
                       macrosData.fat > macrosData.fatGoal
                         ? 'text-red-500'
                         : 'text-gray-600 dark:text-gray-200'

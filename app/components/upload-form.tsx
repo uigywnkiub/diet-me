@@ -16,6 +16,7 @@ import type { TMacrosData, TUploadData } from '../lib/types'
 
 export const defaultMacrosData = {
   calories: 0,
+  burned: 0,
   protein: 0,
   fat: 0,
   carbohydrates: 0,
@@ -47,27 +48,6 @@ export default function UploadForm({ mealEmoji }: TProps) {
 
   const plateRef = useRef<HTMLLabelElement | null>(null)
   const tableRef = useRef<HTMLDivElement | null>(null)
-
-  const onTableDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDraggingTable(true)
-    if (plateRef.current && plateRef.current.contains(e.target as Node)) {
-      setIsDraggingTable(false)
-    }
-    return
-  }
-
-  const onTableDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDraggingTable(false)
-    return
-  }
-
-  const onTableDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDraggingTable(false)
-    return
-  }
 
   const onSubmit = useCallback(
     async (file: File) => {
@@ -116,6 +96,27 @@ export default function UploadForm({ mealEmoji }: TProps) {
     },
     [onSubmit],
   )
+
+  const onTableDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDraggingTable(true)
+    if (plateRef.current && plateRef.current.contains(e.target as Node)) {
+      setIsDraggingTable(false)
+    }
+    return
+  }
+
+  const onTableDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDraggingTable(false)
+    return
+  }
+
+  const onTableDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDraggingTable(false)
+    return
+  }
 
   const onPlateDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault()
@@ -231,7 +232,10 @@ export default function UploadForm({ mealEmoji }: TProps) {
 
     localStorage.setItem(
       LOCAL_STORAGE_KEY.MACROS_DATA,
-      JSON.stringify(updatedData),
+      JSON.stringify({
+        ...existingData,
+        ...updatedData,
+      }),
     )
     window.dispatchEvent(new Event('macrosUpdated'))
     router.refresh()
@@ -283,6 +287,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
                 drag={data.status !== 'loading'}
                 dragConstraints={plateRef}
                 dragTransition={{ bounceDamping: 14 }}
+                dragElastic={0.1}
               >
                 <div
                   className={cn(
@@ -439,6 +444,14 @@ export default function UploadForm({ mealEmoji }: TProps) {
               <div className='flex gap-4'>
                 <div>
                   <span className='text-gray-500 dark:text-gray-400'>
+                    Carbs{' '}
+                  </span>
+                  <span className='font-semibold'>
+                    {numberFormat.format(data.res.carbohydrates)} g
+                  </span>
+                </div>
+                <div>
+                  <span className='text-gray-500 dark:text-gray-400'>
                     Protein{' '}
                   </span>
                   <span className='font-semibold'>
@@ -449,14 +462,6 @@ export default function UploadForm({ mealEmoji }: TProps) {
                   <span className='text-gray-500 dark:text-gray-400'>Fat </span>
                   <span className='font-semibold'>
                     {numberFormat.format(data.res.fat)} g
-                  </span>
-                </div>
-                <div>
-                  <span className='text-gray-500 dark:text-gray-400'>
-                    Carbs{' '}
-                  </span>
-                  <span className='font-semibold'>
-                    {numberFormat.format(data.res.carbohydrates)} g
                   </span>
                 </div>
               </div>

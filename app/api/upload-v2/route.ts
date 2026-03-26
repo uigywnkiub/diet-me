@@ -35,6 +35,12 @@ const CaloriesAIModel = genAI.getGenerativeModel({
       properties: {
         calories: {
           type: SchemaType.NUMBER,
+          description:
+            'Total calories in kcal for all food visible in the image',
+        },
+        carbohydrates: {
+          type: SchemaType.NUMBER,
+          description: 'Carbohydrates in grams (g)',
         },
         protein: {
           type: SchemaType.NUMBER,
@@ -44,12 +50,10 @@ const CaloriesAIModel = genAI.getGenerativeModel({
           type: SchemaType.NUMBER,
           description: 'Fat in grams (g)',
         },
-        carbohydrates: {
-          type: SchemaType.NUMBER,
-          description: 'Carbohydrates in grams (g)',
-        },
         text: {
           type: SchemaType.STRING,
+          description:
+            'Brief description of the food identified and estimation method',
         },
       },
       required: ['calories', 'protein', 'fat', 'carbohydrates', 'text'],
@@ -100,14 +104,27 @@ export async function POST(req: NextRequest, res: NextResponse) {
       })
     }
 
-    const prompt = `Analyze the ENTIRE food item visible in this image, not just a single slice or portion.
+    //     const prompt = `Analyze the ENTIRE food item visible in this image, not just a single slice or portion.
 
-Provide:
-- Total calories (kcal) for the complete food shown
-- Total macronutrients in grams: protein, fat, carbohydrates
-- Brief description
+    // Provide:
+    // - Total calories (kcal) for the complete food shown
+    // - Total macronutrients in grams: protein, fat, carbohydrates
+    // - Brief description
 
-Base calculations on the FULL amount of food visible in the image.`
+    // Base calculations on the FULL amount of food visible in the image.`
+
+    const prompt = `You are a nutrition expert. Analyze all food visible in this image.
+
+Rules:
+- Estimate for the TOTAL quantity shown, not a single serving
+- If packaged food is visible, use the label values scaled to the full package shown
+- If no food is detected, return 0 for all nutrients and explain in text
+- If the image is unclear, provide your best estimate and note uncertainty in text
+
+Return:
+- calories: total kcal
+- protein, fat, carbohydrates: total grams
+- text: 1-2 sentence description of what you see and how you estimated it`
 
     const result = await CaloriesAIModel.generateContent([
       prompt,
