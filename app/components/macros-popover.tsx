@@ -399,7 +399,7 @@ export default function MacrosPopover() {
                   <div
                     className={`text-2xl font-bold md:text-3xl ${macrosData.calories > macrosData.totalCalories ? 'text-red-500' : 'text-gray-900 dark:text-gray-100'}`}
                   >
-                    {Math.round(macrosData.calories)}
+                    {Math.abs(Math.round(macrosData.calories)).toLocaleString()}
                   </div>
                   <div className='mt-1 text-xs text-gray-500 md:text-sm dark:text-gray-400'>
                     Eaten

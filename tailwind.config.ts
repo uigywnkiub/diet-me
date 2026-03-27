@@ -16,7 +16,7 @@ const config: Config = {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'spin-very-slow': 'spin 20s linear infinite',
-        'spin-ease': 'spin-ease 1.5s ease-in-out infinite',
+        'spin-ease': 'spin-ease 1.2s ease-in-out infinite',
       },
       keyframes: {
         'spin-ease': {
@@ -26,7 +26,7 @@ const config: Config = {
             easing: 'ease-in',
           },
           '50%': {
-            transform: 'rotate(180deg) scale(0.95)',
+            // transform: 'rotate(180deg) scale(0.8)',
             filter: 'blur(1px)',
             easing: 'ease-out',
           },
