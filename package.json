@@ -51,9 +51,6 @@
       "unrs-resolver"
     ]
   },
-  "engines": {
-    "node": ">=20"
-  },
   "keywords": [
     "calorie tracker",
     "macro tracker",
