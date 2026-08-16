@@ -372,11 +372,10 @@ export default function UploadForm({ mealEmoji }: TProps) {
                       ? 'Release to Drop It'
                       : 'Select, Drag & Drop, or Paste Meal'}
                   </motion.span>
-
-                  <motion.span className='mt-1 block text-xs font-normal'>
-                    PNG, JPG, HEIC, GIF up to 10MB
-                  </motion.span>
                 </AnimatePresence>
+                <span className='mt-1 block text-xs font-normal'>
+                  PNG, JPG, HEIC, GIF up to 10MB
+                </span>
               </p>
             </>
           )}
