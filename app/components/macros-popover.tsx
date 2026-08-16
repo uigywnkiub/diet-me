@@ -302,14 +302,12 @@ export default function MacrosPopover() {
   return (
     <>
       {/* Floating Button */}
-      <motion.button
-        whileTap={{ scale: 0.95 }}
-        whileHover={{ scale: 1.05 }}
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className='bg-app-gradient-removed fixed right-4 top-4 z-50 rounded-full bg-gray-50 p-3 shadow-[0_0_10px_rgba(0,0,0,0.18)] transition-shadow md:right-10 md:top-10 dark:bg-neutral-800 dark:shadow-[0_0_10px_rgba(0,0,0,0.4)]'
+        className='bg-app-gradient-removed fixed right-4 top-4 z-50 rounded-full bg-gray-50 p-3 shadow-[0_0_10px_rgba(0,0,0,0.18)] outline-none transition-all duration-200 ease-out hover:bg-gray-100 active:scale-[0.97] md:right-10 md:top-10 dark:bg-neutral-800 dark:shadow-[0_0_10px_rgba(0,0,0,0.4)] dark:hover:bg-neutral-700'
       >
         <BiBookAlt className='fill-gray-600 text-2xl dark:fill-gray-100' />
-      </motion.button>
+      </button>
 
       {/* Backdrop */}
       <AnimatePresence>

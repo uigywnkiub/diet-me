@@ -42,17 +42,23 @@ export default function UploadForm({ mealEmoji }: TProps) {
   const [data, setData] = useState<TUploadData>(defaultData)
   const [file, setFile] = useState<File | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
+  const [notes, setNotes] = useState('')
+  const [isNotesVisible, setIsNotesVisible] = useState(false)
 
   const [isDraggingPlate, setIsDraggingPlate] = useState(false)
   const [isDraggingTable, setIsDraggingTable] = useState(false)
 
   const plateRef = useRef<HTMLLabelElement | null>(null)
   const tableRef = useRef<HTMLDivElement | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   const onSubmit = useCallback(
     async (file: File) => {
       const formData = new FormData()
       formData.append('file', file)
+      if (notes.trim()) {
+        formData.append('notes', notes.trim())
+      }
 
       try {
         setData({ ...data, status: 'loading' })
@@ -71,7 +77,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
         throw err
       }
     },
-    [data],
+    [data, notes],
   )
 
   const onChange = useCallback(
@@ -276,7 +282,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
           >
             <AnimatePresence>
               <motion.div
-                className='relative z-10 h-20 w-20 select-none overflow-hidden rounded-full border-2 border-dashed border-gray-300'
+                className='relative z-10 h-20 w-20 select-none overflow-hidden rounded-full border-2 border-dashed border-gray-300 outline outline-2 outline-gray-200 [filter:drop-shadow(0px_0px_1px_rgba(0,0,0,1))]'
                 {...MOTION_EMOJI()}
                 animate={{
                   ...MOTION_EMOJI().animate,
@@ -399,6 +405,86 @@ export default function UploadForm({ mealEmoji }: TProps) {
                 </motion.span>
               </p>
             </>
+          )}
+
+          {data.status !== 'success' && data.status !== 'loading' && (
+            <div className='mt-4 flex w-full flex-col items-center justify-center'>
+              <button
+                type='button'
+                onClick={() => {
+                  setIsNotesVisible((value) => !value)
+                  if (!isNotesVisible) {
+                    setTimeout(() => textareaRef.current?.focus(), 0)
+                  }
+                }}
+                className='inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600 outline-none drop-shadow-[0_0_3px_rgba(0,0,0,0.08)] transition-all duration-200 ease-out hover:bg-gray-100 active:scale-[0.97] dark:bg-neutral-800 dark:text-gray-300 dark:drop-shadow-[0_0_3px_rgba(0,0,0,0.2)] dark:hover:bg-neutral-700'
+              >
+                <span>{isNotesVisible ? 'Hide' : 'Add'} food notes</span>
+                <span
+                  className='text-base leading-none transition-transform duration-200 ease-out'
+                  style={{
+                    transform: isNotesVisible
+                      ? 'rotate(45deg)'
+                      : 'rotate(0deg)',
+                  }}
+                >
+                  +
+                </span>
+              </button>
+
+              <div
+                className='mt-2 grid w-full max-w-xs transition-[grid-template-rows] duration-200 ease-out'
+                style={{ gridTemplateRows: isNotesVisible ? '1fr' : '0fr' }}
+              >
+                <div className='overflow-hidden'>
+                  <div
+                    className='p-1 transition-all duration-200 ease-out'
+                    style={{
+                      opacity: isNotesVisible ? 1 : 0,
+                      transform: isNotesVisible
+                        ? 'translateY(0)'
+                        : 'translateY(-6px)',
+                    }}
+                  >
+                    <div className='relative'>
+                      <textarea
+                        ref={textareaRef}
+                        id='food-notes'
+                        spellCheck={false}
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        rows={3}
+                        maxLength={120}
+                        placeholder='extra cheese, half portion...'
+                        className='w-full resize-none rounded-full bg-gray-50 px-4 text-center text-sm text-gray-700 outline-none drop-shadow-[0_0_3px_rgba(0,0,0,0.08)] transition-all duration-200 placeholder:text-center placeholder:text-gray-400 md:px-8 dark:bg-neutral-800 dark:text-gray-100 dark:drop-shadow-[0_0_3px_rgba(0,0,0,0.2)] dark:placeholder:text-neutral-500'
+                      />
+                      {notes.trim() && (
+                        <button
+                          type='button'
+                          onClick={() => setNotes('')}
+                          className='absolute right-2 top-1/2 -translate-y-2.5 rounded-full bg-gray-200 p-0.5 text-gray-600 outline-none transition-all hover:bg-gray-300 active:scale-90 md:-translate-y-3 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600'
+                          title='Clear notes'
+                        >
+                          <svg
+                            className='h-2.5 w-2.5 md:h-3 md:w-3'
+                            fill='none'
+                            stroke='currentColor'
+                            viewBox='0 0 24 24'
+                          >
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M6 18L18 6M6 6l12 12'
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
           {data.status === 'error' && (

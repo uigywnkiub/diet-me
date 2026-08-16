@@ -64,6 +64,7 @@ const CaloriesAIModel = genAI.getGenerativeModel({
 export async function POST(req: NextRequest, res: NextResponse) {
   const formData = await req.formData()
   const file = formData.get('file') as Blob | null
+  const userNotes = (formData.get('notes') as string | null)?.trim() ?? ''
   // Vercel geo docs: https://vercel.com/guides/geo-ip-headers-geolocation-vercel-functions
   // userGeo works on vercel prod and city may be as null.
   const userGeo = {
@@ -115,16 +116,24 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     const prompt = `You are a nutrition expert. Analyze all food visible in this image.
 
+Before finalizing the estimate, carefully use the user's notes as part of the decision process.
+- Treat the notes as a direct clue about ingredients, recipe details, portion size, toppings, leftovers, and preparation style.
+- If the notes mention things that affect the meal, adjust your estimate before finalizing the answer.
+- If the notes conflict with what is visible in the image, prioritize the visible food for ingredients, but use the notes to fine-tune the quantity, add-ons, or serving size.
+- Do not invent ingredients that are not visible or mentioned; use notes to refine, not to fabricate.
+- If no food is detected, return 0 for all nutrients and explain in text.
+- If the image is unclear, provide your best estimate and note uncertainty in text.
+
 Rules:
 - Estimate for the TOTAL quantity shown, not a single serving
 - If packaged food is visible, use the label values scaled to the full package shown
-- If no food is detected, return 0 for all nutrients and explain in text
-- If the image is unclear, provide your best estimate and note uncertainty in text
+
+User notes:${userNotes ? `\n${userNotes}` : '\nNone'}
 
 Return:
 - calories: total kcal
 - protein, fat, carbohydrates: total grams
-- text: 1-2 sentence description of what you see and how you estimated it`
+- text: 1-2 sentence description of what you see and how you estimated it, including any note-based adjustments`
 
     const result = await CaloriesAIModel.generateContent([
       prompt,
