@@ -263,7 +263,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
         onDragOver={onTableDragOver}
         onDragLeave={onTableDragLeave}
         onDrop={onTableDrop}
-        className='rounded-full border-0 border-double border-gray-300 bg-gray-50 p-10 text-sm shadow-lg outline outline-2 outline-offset-4 outline-gray-300 md:text-base dark:bg-gray-800'
+        className='rounded-full border-0 bg-gray-50 p-10 text-sm shadow-none outline outline-2 outline-offset-4 outline-gray-300 drop-shadow-[0_0_6px_rgba(0,0,0,0.18)] md:text-base dark:bg-neutral-800 dark:outline-neutral-600 dark:drop-shadow-[0_0_6px_rgba(0,0,0,0.4)]'
       >
         <div className='flex flex-col items-center justify-center'>
           <label
@@ -291,7 +291,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
               >
                 <div
                   className={cn(
-                    'absolute inset-0 rounded-full bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-200 dark:to-gray-300',
+                    'absolute inset-0 rounded-full bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-100 dark:to-gray-200',
                   )}
                 ></div>
                 <div
@@ -347,11 +347,12 @@ export default function UploadForm({ mealEmoji }: TProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className='[filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.1))]'
               >
                 <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
               </motion.div>
 
-              <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
+              <p className='text-balance text-center text-gray-600 drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)] dark:text-gray-300 dark:drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]'>
                 <AnimatePresence mode='wait'>
                   <motion.span
                     key={isDraggingPlate ? 'dragging' : 'default'}
@@ -365,9 +366,10 @@ export default function UploadForm({ mealEmoji }: TProps) {
                       ? 'Release to Drop It'
                       : 'Select, Drag & Drop, or Paste Meal'}
                   </motion.span>
-                  {/* <motion.span className='block text-sm font-normal'>
+
+                  <motion.span className='mt-1 block text-xs font-normal'>
                     PNG, JPG, HEIC, GIF up to 10MB
-                  </motion.span> */}
+                  </motion.span>
                 </AnimatePresence>
               </p>
             </>
@@ -380,11 +382,12 @@ export default function UploadForm({ mealEmoji }: TProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className='[filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.1))]'
               >
                 <BiLoaderCircle className='mt-4 animate-spin-ease fill-gray-600 text-3xl dark:fill-gray-300' />
               </motion.div>
 
-              <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
+              <p className='text-balance text-center text-gray-600 drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)] dark:text-gray-300 dark:drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]'>
                 <motion.span
                   className='block font-semibold'
                   initial={{ opacity: 0, y: 4 }}
@@ -405,19 +408,20 @@ export default function UploadForm({ mealEmoji }: TProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className='[filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.1))]'
               >
                 <BiSolidCloudUpload className='mt-4 fill-gray-600 text-3xl dark:fill-gray-300' />
               </motion.div>
 
-              <p className='text-balance text-center text-gray-600 dark:text-gray-300'>
+              <p className='text-balance text-center text-gray-600 drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)] dark:text-gray-300 dark:drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]'>
                 <motion.span
-                  className='block font-semibold text-red-500 dark:text-red-400'
+                  className='block font-semibold text-red-500 drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)] dark:text-red-400 dark:drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]'
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.2, ease: 'easeInOut' }}
                 >
-                  Something went wrong on our end
+                  Something went wrong, try again
                 </motion.span>
               </p>
             </>
@@ -427,7 +431,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
         {data.status === 'success' && (
           <AnimatePresence>
             <motion.div
-              className='mt-4 flex flex-col items-center justify-center gap-4 overflow-auto text-balance text-center'
+              className='mt-4 flex flex-col items-center justify-center gap-4 overflow-auto text-balance text-center drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)] dark:drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]'
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
@@ -441,6 +445,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
                   {numberFormat.format(data.res.calories)} kcal
                 </span>
               </div>
+
               <div className='flex gap-4'>
                 <div>
                   <span className='text-gray-500 dark:text-gray-400'>
@@ -450,6 +455,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
                     {numberFormat.format(data.res.carbohydrates)} g
                   </span>
                 </div>
+
                 <div>
                   <span className='text-gray-500 dark:text-gray-400'>
                     Protein{' '}
@@ -458,6 +464,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
                     {numberFormat.format(data.res.protein)} g
                   </span>
                 </div>
+
                 <div>
                   <span className='text-gray-500 dark:text-gray-400'>Fat </span>
                   <span className='font-semibold'>
@@ -465,6 +472,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
                   </span>
                 </div>
               </div>
+
               <div className='w-11/12'>
                 <span className='text-gray-500 dark:text-gray-400'>Meal </span>
                 <span className='font-semibold'>{data.res.text}</span>

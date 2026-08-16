@@ -5,7 +5,7 @@ export default function Footer() {
 
   return (
     <footer className='mb-4 mt-6 flex justify-center md:mt-8'>
-      <div className='text-balance text-center text-xs font-medium text-gray-400 dark:text-gray-500'>
+      <div className='text-balance text-center text-xs font-medium text-neutral-400 dark:text-neutral-500'>
         © {year} Diet ME — Eat Smart. Live Well.
       </div>
     </footer>

@@ -14,13 +14,17 @@ export default function Home() {
   const mealEmoji = getRandomValue(MEAL_EMOJI) || '🥩'
 
   return (
-    <div className='flex min-h-screen flex-col px-6'>
+    <div className='relative flex min-h-screen flex-col px-6'>
+      <div className="absolute inset-0 -z-10 bg-[url('/images/bg/food-bg.jpg')] bg-cover bg-center opacity-20" />
+      <div className='bg-gray/50 dark:bg-black/50-removed absolute inset-0 -z-10' />
+
       <div className='flex flex-grow items-center justify-center'>
         <div className='w-full md:max-w-xl'>
           <Header />
           <UploadForm mealEmoji={mealEmoji} />
         </div>
       </div>
+
       <Footer />
       <MacrosPopover />
     </div>

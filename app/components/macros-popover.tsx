@@ -306,7 +306,7 @@ export default function MacrosPopover() {
         whileTap={{ scale: 0.95 }}
         whileHover={{ scale: 1.05 }}
         onClick={() => setIsOpen(!isOpen)}
-        className='bg-app-gradient fixed right-4 top-4 z-50 rounded-full bg-gray-50 p-3 shadow-lg transition-shadow hover:shadow-xl md:right-10 md:top-10 dark:bg-gray-800'
+        className='bg-app-gradient-removed fixed right-4 top-4 z-50 rounded-full bg-gray-50 p-3 shadow-[0_0_10px_rgba(0,0,0,0.18)] transition-shadow md:right-10 md:top-10 dark:bg-neutral-800 dark:shadow-[0_0_10px_rgba(0,0,0,0.4)]'
       >
         <BiBookAlt className='fill-gray-600 text-2xl dark:fill-gray-100' />
       </motion.button>
@@ -334,7 +334,7 @@ export default function MacrosPopover() {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className='fixed right-4 top-20 z-50 w-[91.5vw] max-w-2xl md:right-10 md:top-24 md:w-[60vw] lg:w-[30vw]'
           >
-            <div className='bg-app-gradient rounded-3xl bg-white p-4 shadow-2xl md:p-6 dark:bg-gray-800'>
+            <div className='bg-app-gradient-removed rounded-3xl bg-gray-50 p-4 shadow-[0_0_12px_rgba(0,0,0,0.18)] md:p-6 dark:bg-neutral-800 dark:shadow-[0_0_12px_rgba(0,0,0,0.4)]'>
               {/* Header with Buttons */}
               <div className='mb-4 flex items-center justify-between md:mb-6'>
                 <h3 className='text-xl font-extrabold text-gray-900 md:text-2xl dark:text-gray-100'>
@@ -416,7 +416,7 @@ export default function MacrosPopover() {
                       stroke='currentColor'
                       strokeWidth='8'
                       fill='none'
-                      className='text-gray-300 md:hidden dark:text-gray-600'
+                      className='text-gray-200 md:hidden dark:text-gray-500'
                       strokeDasharray={`${2 * Math.PI * 56 * 0.75} ${2 * Math.PI * 56}`}
                       strokeLinecap='round'
                     />
@@ -428,7 +428,7 @@ export default function MacrosPopover() {
                       stroke='currentColor'
                       strokeWidth='10'
                       fill='none'
-                      className='hidden text-gray-300 md:block dark:text-gray-600'
+                      className='hidden text-gray-200 md:block dark:text-gray-500'
                       strokeDasharray={`${2 * Math.PI * 70 * 0.75} ${2 * Math.PI * 70}`}
                       strokeLinecap='round'
                     />
@@ -527,7 +527,7 @@ export default function MacrosPopover() {
                       Carbs
                     </span>
                   </div>
-                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600'>
+                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500'>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{
@@ -577,7 +577,7 @@ export default function MacrosPopover() {
                       Protein
                     </span>
                   </div>
-                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600'>
+                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500'>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{
@@ -625,7 +625,7 @@ export default function MacrosPopover() {
                       Fat
                     </span>
                   </div>
-                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-300 dark:bg-gray-600'>
+                  <div className='relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500'>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{
