@@ -282,7 +282,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
           >
             <AnimatePresence>
               <motion.div
-                className='relative z-10 h-20 w-20 select-none overflow-hidden rounded-full border-2 border-dashed border-gray-300 outline outline-2 outline-gray-200 [filter:drop-shadow(0px_0px_1px_rgba(0,0,0,1))]'
+                className='[filter:drop-shadow(0px_0px_1px_rgba(0,0,0,1))]-removed relative z-10 h-20 w-20 select-none overflow-hidden rounded-full border-2 border-dashed border-gray-300 outline outline-2 outline-gray-200'
                 {...MOTION_EMOJI()}
                 animate={{
                   ...MOTION_EMOJI().animate,
