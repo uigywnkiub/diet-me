@@ -11,7 +11,7 @@ import { LOCAL_STORAGE_KEY } from '@/constants/local-storage'
 import Compressor from 'compressorjs'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { cn, numberFormat } from '../lib/helpers'
+import { cn, numberFormat, updateStreak } from '../lib/helpers'
 import type { TMacrosData, TUploadData } from '../lib/types'
 
 export const defaultMacrosData = {
@@ -243,7 +243,11 @@ export default function UploadForm({ mealEmoji }: TProps) {
         ...updatedData,
       }),
     )
+
+    // Update streak when food is successfully analyzed
+    updateStreak()
     window.dispatchEvent(new Event('macrosUpdated'))
+    window.dispatchEvent(new Event('streakUpdated'))
     router.refresh()
   }, [data, router])
 
@@ -370,7 +374,7 @@ export default function UploadForm({ mealEmoji }: TProps) {
                   >
                     {isDraggingPlate
                       ? 'Release to Drop It'
-                      : 'Select, Drag & Drop, or Paste Meal'}
+                      : 'Select, Drag & Drop, or Paste Food Image'}
                   </motion.span>
                 </AnimatePresence>
                 <span className='mt-1 block text-xs font-normal'>
@@ -447,40 +451,44 @@ export default function UploadForm({ mealEmoji }: TProps) {
                           : 'translateY(-6px)',
                       }}
                     >
-                      <div className='relative'>
+                      <div className='relative flex w-full justify-center'>
                         <textarea
                           ref={textareaRef}
                           id='food-notes'
                           spellCheck={false}
                           value={notes}
                           onChange={(e) => setNotes(e.target.value)}
-                          rows={3}
+                          rows={2}
                           maxLength={120}
                           placeholder='extra cheese, half portion...'
-                          className='w-full resize-none rounded-full bg-gray-50 px-4 text-center text-sm text-gray-700 outline-none drop-shadow-[0_0_3px_rgba(0,0,0,0.08)] transition-all duration-200 placeholder:text-center placeholder:text-gray-400 md:px-8 dark:bg-neutral-800 dark:text-gray-100 dark:drop-shadow-[0_0_3px_rgba(0,0,0,0.2)] dark:placeholder:text-neutral-500'
+                          className='w-[80%] resize-none rounded-full bg-gray-50 px-4 text-center text-sm text-gray-700 outline-none drop-shadow-[0_0_3px_rgba(0,0,0,0.08)] transition-all duration-200 placeholder:text-center placeholder:text-gray-400 md:px-8 dark:bg-neutral-800 dark:text-gray-100 dark:drop-shadow-[0_0_3px_rgba(0,0,0,0.2)] dark:placeholder:text-neutral-500'
                         />
-                        {notes.trim() && (
-                          <button
-                            type='button'
-                            onClick={() => setNotes('')}
-                            className='absolute right-2 top-1/2 -translate-y-2.5 rounded-full bg-gray-200 p-0.5 text-gray-600 outline-none transition-all hover:bg-gray-300 active:scale-90 md:-translate-y-3 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600'
-                            title='Clear notes'
+
+                        <button
+                          type='button'
+                          onClick={() => setNotes('')}
+                          className={`absolute right-8 top-1/2 -translate-y-2 rounded-full bg-gray-200 p-0.5 text-gray-600 outline-none transition-all duration-200 hover:bg-gray-300 active:scale-90 md:right-10 dark:bg-neutral-700 dark:text-gray-300 dark:hover:bg-neutral-600 ${
+                            notes.trim()
+                              ? 'scale-100 opacity-100'
+                              : 'pointer-events-none scale-75 opacity-0'
+                          }`}
+                          title='Clear notes'
+                          tabIndex={notes.trim() ? 0 : -1}
+                        >
+                          <svg
+                            className='h-2.5 w-2.5 md:h-3 md:w-3'
+                            fill='none'
+                            stroke='currentColor'
+                            viewBox='0 0 24 24'
                           >
-                            <svg
-                              className='h-2.5 w-2.5 md:h-3 md:w-3'
-                              fill='none'
-                              stroke='currentColor'
-                              viewBox='0 0 24 24'
-                            >
-                              <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth={2}
-                                d='M6 18L18 6M6 6l12 12'
-                              />
-                            </svg>
-                          </button>
-                        )}
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M6 18L18 6M6 6l12 12'
+                            />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </div>

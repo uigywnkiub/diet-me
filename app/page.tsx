@@ -1,5 +1,6 @@
 import MEAL_EMOJI from '@/public/emoji/meal-emoji.json'
 
+import FireStreak from './components/fire-streak'
 import Footer from './components/footer'
 import Header from './components/header'
 import MacrosPopover from './components/macros-popover'
@@ -25,8 +26,9 @@ export default function Home() {
         </div>
       </div>
 
-      <Footer />
       <MacrosPopover />
+      <FireStreak />
+      <Footer />
     </div>
   )
 }
