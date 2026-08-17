@@ -304,7 +304,7 @@ export default function MacrosPopover() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className='bg-app-gradient-removed fixed right-4 top-4 z-50 rounded-full bg-gray-50 p-3 shadow-[0_0_10px_rgba(0,0,0,0.18)] outline-none transition-all duration-200 ease-out hover:bg-gray-100 active:scale-[0.97] md:right-10 md:top-10 dark:bg-neutral-800 dark:shadow-[0_0_10px_rgba(0,0,0,0.4)] dark:hover:bg-neutral-700'
+        className='bg-app-gradient-removed fixed right-4 top-4 z-50 rounded-full bg-gray-50 p-3 shadow-[0_0_10px_rgba(0,0,0,0.18)] outline-none transition-all duration-200 ease-out active:scale-[0.97] md:right-10 md:top-10 md:hover:bg-gray-100 dark:bg-neutral-800 dark:shadow-[0_0_10px_rgba(0,0,0,0.4)] dark:md:hover:bg-neutral-700'
       >
         <BiBookAlt className='fill-gray-600 text-2xl dark:fill-gray-100' />
       </button>
@@ -346,14 +346,14 @@ export default function MacrosPopover() {
                     <>
                       <button
                         onClick={onSaveGoals}
-                        className='rounded-full p-2 transition-colors hover:bg-green-50/50 dark:hover:bg-green-900/30'
+                        className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-green-50/50 dark:md:hover:bg-green-900/30'
                         title='Save goals'
                       >
                         <BiCheck className='fill-green-500 text-lg md:text-xl dark:fill-green-400' />
                       </button>
                       <button
                         onClick={onCancelEdit}
-                        className='rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-900/30'
+                        className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-gray-200 dark:md:hover:bg-gray-900/30'
                         title='Cancel'
                       >
                         <BiX className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
@@ -364,7 +364,7 @@ export default function MacrosPopover() {
                       {hasHistory && (
                         <button
                           onClick={onRevertLast}
-                          className='rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-900/30'
+                          className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-gray-200 dark:md:hover:bg-gray-900/30'
                           title='Revert last analyzed food'
                         >
                           <BiUndo className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
@@ -372,7 +372,7 @@ export default function MacrosPopover() {
                       )}
                       <button
                         onClick={() => setIsEditingGoals(true)}
-                        className='rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-900/30'
+                        className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-gray-200 dark:md:hover:bg-gray-900/30'
                         title='Edit goals'
                       >
                         <BiEditAlt className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
@@ -380,7 +380,7 @@ export default function MacrosPopover() {
                       {macrosData.calories > 0 && (
                         <button
                           onClick={onClearData}
-                          className='rounded-full p-2 transition-colors hover:bg-red-50/50 dark:hover:bg-red-900/30'
+                          className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-red-50/50 dark:md:hover:bg-red-900/30'
                           title='Clear all data'
                         >
                           <BiTrashAlt className='fill-red-600 text-lg md:text-xl dark:fill-red-400' />
@@ -495,7 +495,7 @@ export default function MacrosPopover() {
                 <div className='text-center'>
                   <button
                     onClick={() => onChangeBurned(50)}
-                    className='rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-900/30'
+                    className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-gray-200 dark:md:hover:bg-gray-900/30'
                     title='Add 50 burned calories'
                   >
                     <BiPlus className='fill-gray-600 text-lg md:text-xl dark:fill-gray-400' />
@@ -508,7 +508,7 @@ export default function MacrosPopover() {
                   </div>
                   <button
                     onClick={() => onChangeBurned(-50)}
-                    className='rounded-full p-2 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-gray-900/30'
+                    className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] disabled:cursor-not-allowed disabled:opacity-30 md:hover:bg-gray-200 dark:md:hover:bg-gray-900/30'
                     disabled={macrosData.burned === 0}
                     title='Remove 50 burned calories'
                   >
