@@ -346,7 +346,7 @@ export default function MacrosPopover() {
                     <>
                       <button
                         onClick={onSaveGoals}
-                        className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-green-50/50 dark:md:hover:bg-green-900/30'
+                        className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-green-100 dark:md:hover:bg-green-900/30'
                         title='Save goals'
                       >
                         <BiCheck className='fill-green-500 text-lg md:text-xl dark:fill-green-400' />
@@ -380,7 +380,7 @@ export default function MacrosPopover() {
                       {macrosData.calories > 0 && (
                         <button
                           onClick={onClearData}
-                          className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-red-50/50 dark:md:hover:bg-red-900/30'
+                          className='rounded-full p-2 transition-all duration-200 ease-out active:scale-[0.96] md:hover:bg-red-100 dark:md:hover:bg-red-900/30'
                           title='Clear all data'
                         >
                           <BiTrashAlt className='fill-red-600 text-lg md:text-xl dark:fill-red-400' />
